@@ -862,55 +862,46 @@
   }
 
   function halfPageFits(songs, fontSize, showHeader) {
-    // Instead of relying on CSS multi-column overflow detection (unreliable),
-    // measure total content height in a single column, then check if it
-    // fits within 2 columns of the available height.
-    const testPage = document.createElement('div');
-    testPage.className = 'print-page half-page-format';
-    testPage.style.cssText = 'position:absolute; left:-9999px; top:0;';
+    // Use standalone pixel measurements — no parent-chain dependencies.
+    // 1. Measure px-per-inch using a ruler element
+    const ruler = document.createElement('div');
+    ruler.style.cssText = 'position:absolute; left:-9999px; width:1in; height:1in;';
+    document.body.appendChild(ruler);
+    const ppi = ruler.offsetWidth;
+    document.body.removeChild(ruler);
 
-    const half = document.createElement('div');
-    half.style.cssText = 'width:50%; height:100%; padding-right:0.15in;';
+    // Page: 10in x 7.5in. Each half: 5in wide, 0.15in padding = 4.85in content.
+    // 2 columns with 0.15in gap: each column = (4.85 - 0.15) / 2 = 2.35in
+    const pageHeightPx = Math.floor(7.5 * ppi);
+    const colWidthPx = Math.floor(2.35 * ppi);
 
+    // Measure header height if needed
+    let headerH = 0;
     if (showHeader) {
       const title = getPageTitle();
       if (title) {
-        const header = document.createElement('div');
-        header.className = 'page-header';
-        header.style.fontSize = Math.min(fontSize, 11) + 'pt';
-        header.textContent = title;
-        half.appendChild(header);
+        const h = document.createElement('div');
+        h.className = 'page-header';
+        h.style.cssText = 'position:absolute; left:-9999px; width:' + Math.floor(4.85 * ppi) + 'px;';
+        h.style.fontSize = Math.min(fontSize, 11) + 'pt';
+        h.textContent = title;
+        document.body.appendChild(h);
+        headerH = h.offsetHeight + 10;
+        document.body.removeChild(h);
       }
     }
 
-    // Temporary 2-col container just to measure one column's width
-    const tempCols = document.createElement('div');
-    tempCols.style.cssText = 'column-count:2; column-gap:0.15in; height:10px;';
-    const marker = document.createElement('div');
-    marker.style.cssText = 'break-inside:avoid;';
-    marker.innerHTML = '&nbsp;';
-    tempCols.appendChild(marker);
-    half.appendChild(tempCols);
+    const availableHeight = pageHeightPx - headerH;
 
-    testPage.appendChild(half);
-    document.body.appendChild(testPage);
-
-    const headerEl = half.querySelector('.page-header');
-    const headerH = headerEl ? headerEl.offsetHeight + 6 : 0;
-    const availableHeight = half.clientHeight - headerH;
-    const colWidth = marker.offsetWidth;
-
-    // Remove temp cols, render content at single-column width to measure height
-    half.removeChild(tempCols);
+    // Render all songs at single-column width to measure total height
     const content = document.createElement('div');
-    content.style.width = colWidth + 'px';
+    content.style.cssText = 'position:absolute; left:-9999px; width:' + colWidthPx + 'px;';
     content.innerHTML = songs.map(s => buildSongHTML(s, fontSize)).join('');
-    half.appendChild(content);
-
+    document.body.appendChild(content);
     const totalHeight = content.scrollHeight;
-    document.body.removeChild(testPage);
+    document.body.removeChild(content);
 
-    // Content fits in 2 columns if total height <= 2 * column height
+    // Fits in 2 columns if total content height <= 2 * available column height
     return totalHeight <= availableHeight * 2;
   }
 
