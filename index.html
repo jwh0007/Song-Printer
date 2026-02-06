@@ -732,50 +732,50 @@
   function generateHalfPageLayout() {
     const sizes = [14, 13.5, 13, 12.5, 12, 11.5, 11, 10.5, 10, 9.5, 9, 8.5, 8, 7.5, 7];
     let bestSize = 7;
+    let bestPages = null;
 
-    // Find the largest font where we can paginate all songs
-    // (every page's worth of songs must fit on a half-page)
+    // Find the largest font where all songs fit on at most 2 pages
     for (const size of sizes) {
       const pages = paginateHalfPage(selectedSongs, size);
-      if (pages) {
+      if (pages && pages.length <= 2) {
         bestSize = size;
+        bestPages = pages;
         break;
       }
     }
 
-    const pages = paginateHalfPage(selectedSongs, bestSize);
+    // If nothing fits in 2 pages even at 7pt, just use 7pt with however many pages needed
+    if (!bestPages) {
+      bestPages = paginateHalfPage(selectedSongs, bestSize);
+    }
+
     previewContainer.innerHTML = '';
 
-    if (!pages || pages.length === 0) {
+    if (!bestPages || bestPages.length === 0) {
       // Fallback: one song per page at smallest size
       for (let i = 0; i < selectedSongs.length; i++) {
-        const label = `Page ${i + 1} of ${selectedSongs.length}`;
-        addPageLabel(previewContainer, label);
+        addPageLabel(previewContainer, `Page ${i + 1} of ${selectedSongs.length}`);
         previewContainer.appendChild(createHalfPage([selectedSongs[i]], bestSize, i === 0));
       }
       fontInfo.textContent = `Format: Cut-in-Half | Font size: ${bestSize}pt | ${selectedSongs.length} pages`;
       return;
     }
 
-    // Render pages. For double-sided: pages pair as front/back of each sheet.
-    for (let i = 0; i < pages.length; i++) {
+    // Render pages
+    for (let i = 0; i < bestPages.length; i++) {
       const isFirst = (i === 0);
       let label;
-      if (pages.length === 1) {
+      if (bestPages.length === 1) {
         label = 'Both halves are identical \u2014 cut down the middle';
-      } else if (pages.length === 2) {
-        label = i === 0 ? 'Front (cut down the middle)' : 'Back (print double-sided, then cut)';
       } else {
-        // Multiple sheets: pair pages as front/back
-        const sheetNum = Math.floor(i / 2) + 1;
-        const side = (i % 2 === 0) ? 'Front' : 'Back';
-        label = `Sheet ${sheetNum} \u2014 ${side}`;
+        label = i === 0 ? 'Front (cut down the middle)' : 'Back (print double-sided, then cut)';
       }
       addPageLabel(previewContainer, label);
-      previewContainer.appendChild(createHalfPage(pages[i], bestSize, isFirst));
+      previewContainer.appendChild(createHalfPage(bestPages[i], bestSize, isFirst));
     }
 
-    fontInfo.textContent = `Format: Cut-in-Half | Font size: ${bestSize}pt | ${pages.length} page${pages.length > 1 ? 's' : ''}`;
+    const desc = bestPages.length === 1 ? '1 side' : 'front + back';
+    fontInfo.textContent = `Format: Cut-in-Half | Font size: ${bestSize}pt | ${desc}`;
   }
 
   // Split songs into pages where each page's songs fit on one half-page
