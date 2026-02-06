@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Song Printer</title>
+  <style>
+    /* ===== Screen styles ===== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    .controls {
+      max-width: 700px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .controls h1 {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+
+    .controls p {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .search-area {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    #songInput {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      outline: none;
+    }
+
+    #songInput:focus {
+      border-color: #4a90d9;
+    }
+
+    .suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 10;
+      display: none;
+    }
+
+    .suggestions.active { display: block; }
+
+    .suggestion-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .suggestion-item:hover,
+    .suggestion-item.highlighted {
+      background: #e8f0fe;
+    }
+
+    .selected-songs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+      min-height: 30px;
+    }
+
+    .song-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #e8f0fe;
+      color: #1a56db;
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 13px;
+    }
+
+    .song-tag .remove {
+      cursor: pointer;
+      font-weight: bold;
+      margin-left: 2px;
+      font-size: 15px;
+      line-height: 1;
+    }
+
+    .song-tag .remove:hover { color: #c00; }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 24px;
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #1a56db;
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: #1342a8; }
+
+    .btn-secondary {
+      background: #e5e5e5;
+      color: #333;
+    }
+
+    .btn-secondary:hover { background: #d0d0d0; }
+
+    .font-size-info {
+      font-size: 12px;
+      color: #888;
+      margin-top: 8px;
+    }
+
+    .btn-save {
+      background: #16a34a;
+      color: #fff;
+    }
+
+    .btn-save:hover { background: #15803d; }
+
+    .btn-save:disabled {
+      background: #ccc;
+      color: #888;
+      cursor: default;
+    }
+
+    .save-notice {
+      font-size: 12px;
+      color: #16a34a;
+      margin-top: 8px;
+      display: none;
+    }
+
+    .save-notice.active { display: block; }
+
+    .edit-hint {
+      font-size: 12px;
+      color: #999;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .edit-hint.active { display: block; }
+
+    /* Editable song elements */
+    .song-title[contenteditable="true"],
+    .song-line[contenteditable="true"] {
+      cursor: text;
+    }
+
+    .song-title:hover,
+    .song-line:not(.empty):hover {
+      background: #fef9c3;
+      cursor: text;
+    }
+
+    .song-title:focus,
+    .song-line:focus {
+      background: #fef08a;
+      outline: 1px solid #eab308;
+      outline-offset: 1px;
+    }
+
+    .has-edits {
+      background: #dcfce7;
+    }
+
+    /* ===== Preview container ===== */
+    #previewContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Each page is sized to exact landscape letter dimensions */
+    .print-page {
+      background: #fff;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+      margin-bottom: 30px;
+      /* Landscape letter content area: 10" x 7.5" (11x8.5 minus 0.5" margins) */
+      width: 10in;
+      height: 7.5in;
+      padding: 0;
+      overflow: hidden;
+      position: relative;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .song-columns {
+      column-count: 3;
+      column-gap: 0.25in;
+      column-fill: auto;
+      width: 100%;
+      height: 100%;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .song-block {
+      break-inside: avoid;
+      margin-bottom: 8px;
+    }
+
+    .song-title {
+      font-weight: bold;
+      margin-bottom: 2px;
+    }
+
+    .song-line {
+      line-height: 1.3;
+    }
+
+    .song-line.empty {
+      height: 0.4em;
+    }
+
+    .indent-1 { margin-left: 20px; }
+    .indent-2 { margin-left: 40px; }
+    .indent-3 { margin-left: 60px; }
+
+    .page-header {
+      font-size: 13pt;
+      font-weight: bold;
+      text-align: center;
+      padding-bottom: 6px;
+      margin-bottom: 4px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .page-label {
+      text-align: center;
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 6px;
+    }
+
+    /* ===== Print styles ===== */
+    @media print {
+      body {
+        background: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .controls, .font-size-info, .edit-hint, .save-notice, .page-label {
+        display: none !important;
+      }
+
+      [contenteditable] {
+        cursor: default;
+        -webkit-user-modify: read-only;
+      }
+
+      .has-edits {
+        background: none;
+      }
+
+      .song-title:hover,
+      .song-line:not(.empty):hover {
+        background: none;
+      }
+
+      #previewContainer {
+        padding: 0;
+        margin: 0;
+        display: block;
+      }
+
+      .print-page {
+        box-shadow: none;
+        margin: 0;
+        /* Size to full page, padding provides the margins */
+        width: 11in;
+        height: 8.5in;
+        padding: 0.5in;
+        overflow: hidden;
+        page-break-after: always;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .print-page:last-child {
+        page-break-after: auto;
+      }
+
+      /* margin: 0 removes browser headers/footers (URL, date, page numbers) */
+      @page {
+        size: 11in 8.5in;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="controls">
+  <h1>Song Printer</h1>
+  <p>Type song names to add them. Press Enter or click a suggestion to add a song.</p>
+
+  <div style="margin-bottom: 12px;">
+    <input type="text" id="pageTitle" placeholder="e.g. Sunday, February 9 2026" style="width:100%;padding:10px 12px;font-size:14px;font-family:Arial,sans-serif;border:2px solid #ddd;border-radius:6px;outline:none;">
+  </div>
+
+  <div class="selected-songs" id="selectedSongs"></div>
+
+  <div class="search-area">
+    <input type="text" id="songInput" placeholder="Start typing a song name..." autocomplete="off">
+    <div class="suggestions" id="suggestions"></div>
+  </div>
+
+  <div class="buttons">
+    <button class="btn btn-primary" id="generateBtn">Generate Layout</button>
+    <button class="btn btn-secondary" id="printBtn">Print</button>
+    <button class="btn btn-secondary" id="clearBtn">Clear All</button>
+    <button class="btn btn-save" id="saveBtn" disabled>Save Changes</button>
+  </div>
+  <div class="font-size-info" id="fontInfo"></div>
+  <div class="edit-hint" id="editHint">Click any song text to edit typos. Changes are highlighted in green.</div>
+  <div class="save-notice" id="saveNotice"></div>
+</div>
+
+<div id="previewContainer"></div>
+
+<script src="songs.js"></script>
+<script>
+(function() {
+  const input = document.getElementById('songInput');
+  const suggestionsEl = document.getElementById('suggestions');
+  const selectedSongsEl = document.getElementById('selectedSongs');
+  const previewContainer = document.getElementById('previewContainer');
+  const fontInfo = document.getElementById('fontInfo');
+
+  // Pre-fill with next Sunday's date
+  (function prefillDate() {
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0=Sun
+    const daysUntilSunday = dayOfWeek === 0 ? 0 : 7 - dayOfWeek;
+    const sunday = new Date(now);
+    sunday.setDate(now.getDate() + daysUntilSunday);
+    const months = ['January','February','March','April','May','June',
+                    'July','August','September','October','November','December'];
+    document.getElementById('pageTitle').value =
+      `Sunday, ${months[sunday.getMonth()]} ${sunday.getDate()} ${sunday.getFullYear()}`;
+  })();
+
+  let selectedSongs = [];
+  let highlightedIdx = -1;
+  let currentMatches = [];
+  let hasEdits = false;
+  const saveBtn = document.getElementById('saveBtn');
+  const saveNotice = document.getElementById('saveNotice');
+  const editHint = document.getElementById('editHint');
+
+  // --- Search / Autocomplete ---
+
+  function normalize(str) {
+    return str.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+  }
+
+  function findMatches(query) {
+    if (!query.trim()) return [];
+    const q = normalize(query);
+    const words = q.split(/\s+/);
+    return SONGS.filter(song => {
+      const t = normalize(song.title);
+      return words.every(w => t.includes(w));
+    }).filter(song => !selectedSongs.some(s => s.title === song.title));
+  }
+
+  function showSuggestions(matches) {
+    currentMatches = matches;
+    highlightedIdx = -1;
+    if (matches.length === 0) {
+      suggestionsEl.classList.remove('active');
+      return;
+    }
+    suggestionsEl.innerHTML = matches.map((song, i) =>
+      `<div class="suggestion-item" data-idx="${i}">${song.title}</div>`
+    ).join('');
+    suggestionsEl.classList.add('active');
+  }
+
+  function hideSuggestions() {
+    suggestionsEl.classList.remove('active');
+    currentMatches = [];
+    highlightedIdx = -1;
+  }
+
+  function addSong(song) {
+    if (selectedSongs.some(s => s.title === song.title)) return;
+    selectedSongs.push(song);
+    renderSelectedSongs();
+    input.value = '';
+    hideSuggestions();
+    input.focus();
+  }
+
+  function removeSong(idx) {
+    selectedSongs.splice(idx, 1);
+    renderSelectedSongs();
+  }
+
+  function renderSelectedSongs() {
+    selectedSongsEl.innerHTML = selectedSongs.map((song, i) =>
+      `<span class="song-tag">${song.title}<span class="remove" data-idx="${i}">&times;</span></span>`
+    ).join('');
+  }
+
+  input.addEventListener('input', () => {
+    const matches = findMatches(input.value);
+    showSuggestions(matches);
+  });
+
+  input.addEventListener('keydown', (e) => {
+    if (!suggestionsEl.classList.contains('active')) {
+      if (e.key === 'Enter') {
+        const matches = findMatches(input.value);
+        if (matches.length === 1) {
+          addSong(matches[0]);
+        }
+      }
+      return;
+    }
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      highlightedIdx = Math.min(highlightedIdx + 1, currentMatches.length - 1);
+      updateHighlight();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      highlightedIdx = Math.max(highlightedIdx - 1, 0);
+      updateHighlight();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (highlightedIdx >= 0 && highlightedIdx < currentMatches.length) {
+        addSong(currentMatches[highlightedIdx]);
+      } else if (currentMatches.length === 1) {
+        addSong(currentMatches[0]);
+      }
+    } else if (e.key === 'Escape') {
+      hideSuggestions();
+    }
+  });
+
+  function updateHighlight() {
+    const items = suggestionsEl.querySelectorAll('.suggestion-item');
+    items.forEach((el, i) => {
+      el.classList.toggle('highlighted', i === highlightedIdx);
+    });
+    if (highlightedIdx >= 0 && items[highlightedIdx]) {
+      items[highlightedIdx].scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  suggestionsEl.addEventListener('click', (e) => {
+    const item = e.target.closest('.suggestion-item');
+    if (item) {
+      const idx = parseInt(item.dataset.idx);
+      addSong(currentMatches[idx]);
+    }
+  });
+
+  selectedSongsEl.addEventListener('click', (e) => {
+    if (e.target.classList.contains('remove')) {
+      removeSong(parseInt(e.target.dataset.idx));
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-area')) {
+      hideSuggestions();
+    }
+  });
+
+  // --- Layout Generation ---
+
+  function getSongIndex(song) {
+    return SONGS.findIndex(s => s.title === song.title);
+  }
+
+  function buildSongHTML(song, fontSize) {
+    const songIdx = getSongIndex(song);
+    let html = `<div class="song-block">`;
+    html += `<div class="song-title" contenteditable="true" data-song-idx="${songIdx}" data-field="title" style="font-size:${fontSize}pt">${escapeHtml(song.title)}</div>`;
+    for (let i = 0; i < song.lines.length; i++) {
+      const line = song.lines[i];
+      if (line.text === '') {
+        html += `<div class="song-line empty"></div>`;
+      } else {
+        const indentClass = line.indent > 0 ? ` indent-${Math.min(line.indent, 3)}` : '';
+        html += `<div class="song-line${indentClass}" contenteditable="true" data-song-idx="${songIdx}" data-line-idx="${i}" data-field="line" style="font-size:${fontSize}pt">${escapeHtml(line.text)}</div>`;
+      }
+    }
+    html += `</div>`;
+    return html;
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function contentFits(page) {
+    const columns = page.querySelector('.song-columns');
+    // With CSS multi-column + fixed height, overflow creates extra columns
+    // beyond the 3 we want. Detect this by checking if the content's actual
+    // rendered width exceeds the container width (meaning a 4th+ column exists).
+    // scrollWidth > clientWidth means horizontal overflow = doesn't fit.
+    return columns.scrollWidth <= columns.clientWidth + 1;
+  }
+
+  function getPageTitle() {
+    return document.getElementById('pageTitle').value.trim();
+  }
+
+  function createPage(songs, fontSize, showHeader) {
+    const page = document.createElement('div');
+    page.className = 'print-page';
+
+    if (showHeader) {
+      const title = getPageTitle();
+      if (title) {
+        const header = document.createElement('div');
+        header.className = 'page-header';
+        header.textContent = title;
+        page.appendChild(header);
+      }
+    }
+
+    const cols = document.createElement('div');
+    cols.className = 'song-columns';
+    cols.innerHTML = songs.map(s => buildSongHTML(s, fontSize)).join('');
+    page.appendChild(cols);
+    return page;
+  }
+
+  function addPageLabel(container, pageNum, totalPages) {
+    const label = document.createElement('div');
+    label.className = 'page-label';
+    label.textContent = `Page ${pageNum} of ${totalPages}`;
+    container.appendChild(label);
+  }
+
+  function generateLayout() {
+    if (selectedSongs.length === 0) {
+      previewContainer.innerHTML = '<p style="text-align:center;color:#888;margin-top:30px;">No songs selected.</p>';
+      fontInfo.textContent = '';
+      return;
+    }
+
+    // Try font sizes from 11 down to 9 in 0.5 steps
+    const sizes = [11, 10.5, 10, 9.5, 9];
+    let bestSize = 9;
+    let fitsOnOnePage = false;
+
+    for (const size of sizes) {
+      const page = createPage(selectedSongs, size, true);
+      previewContainer.innerHTML = '';
+      previewContainer.appendChild(page);
+
+      if (contentFits(page)) {
+        bestSize = size;
+        fitsOnOnePage = true;
+        break;
+      }
+    }
+
+    if (fitsOnOnePage) {
+      fontInfo.textContent = `Font size: ${bestSize}pt — fits on 1 page`;
+    } else {
+      // At 9pt it doesn't fit — split across pages
+      splitIntoPages(selectedSongs, 9);
+    }
+  }
+
+  function splitIntoPages(songs, fontSize) {
+    // Find how many songs fit on page 1 (with header)
+    for (let splitAt = songs.length - 1; splitAt >= 1; splitAt--) {
+      const page1Songs = songs.slice(0, splitAt);
+      const testPage = createPage(page1Songs, fontSize, true);
+      previewContainer.innerHTML = '';
+      previewContainer.appendChild(testPage);
+
+      if (contentFits(testPage)) {
+        // page1Songs fit — now build the final 2-page layout
+        const page2Songs = songs.slice(splitAt);
+
+        previewContainer.innerHTML = '';
+        addPageLabel(previewContainer, 1, 2);
+        previewContainer.appendChild(createPage(page1Songs, fontSize, true));
+        addPageLabel(previewContainer, 2, 2);
+        previewContainer.appendChild(createPage(page2Songs, fontSize, false));
+
+        fontInfo.textContent = `Font size: ${fontSize}pt — ${songs.length} songs across 2 pages`;
+        return;
+      }
+    }
+
+    // Fallback: just show everything on one page
+    previewContainer.innerHTML = '';
+    previewContainer.appendChild(createPage(songs, fontSize, true));
+    fontInfo.textContent = `Font size: ${fontSize}pt`;
+  }
+
+  // --- Buttons ---
+
+  document.getElementById('generateBtn').addEventListener('click', generateLayout);
+
+  document.getElementById('printBtn').addEventListener('click', () => {
+    if (selectedSongs.length === 0) {
+      generateLayout();
+      return;
+    }
+    if (!previewContainer.querySelector('.print-page')) {
+      generateLayout();
+    }
+    window.print();
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    selectedSongs = [];
+    renderSelectedSongs();
+    previewContainer.innerHTML = '';
+    fontInfo.textContent = '';
+  });
+
+  // --- Inline Editing ---
+
+  function markDirty() {
+    hasEdits = true;
+    saveBtn.disabled = false;
+    saveNotice.classList.remove('active');
+    saveNotice.textContent = '';
+  }
+
+  // Listen for edits on song titles and lines
+  previewContainer.addEventListener('input', (e) => {
+    const el = e.target;
+    const songIdx = parseInt(el.dataset.songIdx);
+    const field = el.dataset.field;
+
+    if (isNaN(songIdx) || songIdx < 0 || songIdx >= SONGS.length) return;
+
+    if (field === 'title') {
+      const newTitle = el.textContent.trim();
+      if (newTitle && newTitle !== SONGS[songIdx].title) {
+        SONGS[songIdx].title = newTitle;
+        el.classList.add('has-edits');
+        markDirty();
+        // Also update the selected songs tag display
+        const selIdx = selectedSongs.findIndex(s => getSongIndex(s) === songIdx);
+        if (selIdx >= 0) {
+          selectedSongs[selIdx] = SONGS[songIdx];
+          renderSelectedSongs();
+        }
+      }
+    } else if (field === 'line') {
+      const lineIdx = parseInt(el.dataset.lineIdx);
+      if (isNaN(lineIdx) || lineIdx < 0 || lineIdx >= SONGS[songIdx].lines.length) return;
+      const newText = el.textContent.trim();
+      if (newText !== SONGS[songIdx].lines[lineIdx].text) {
+        SONGS[songIdx].lines[lineIdx].text = newText;
+        el.classList.add('has-edits');
+        markDirty();
+      }
+    }
+  });
+
+  // Prevent Enter from inserting <br> or <div> — just blur instead
+  previewContainer.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.target.contentEditable === 'true') {
+      e.preventDefault();
+      e.target.blur();
+    }
+  });
+
+  // Show edit hint when layout is generated
+  function showEditHint() {
+    editHint.classList.add('active');
+  }
+
+  // Patch generateLayout to show hint
+  const origGenerate = generateLayout;
+  generateLayout = function() {
+    origGenerate();
+    if (selectedSongs.length > 0) showEditHint();
+  };
+
+  // Save: serialize SONGS back to songs.js format and copy to clipboard
+  saveBtn.addEventListener('click', async () => {
+    const timestamp = new Date().toISOString();
+    const jsContent = `// Auto-generated by build.py — do not edit manually\n// Generated: ${timestamp}\nconst SONGS = ${JSON.stringify(SONGS, null, 2)};\n`;
+
+    try {
+      await navigator.clipboard.writeText(jsContent);
+      saveNotice.textContent = 'Copied to clipboard! Paste into songs.js to save permanently. (Cmd+V in your editor)';
+      saveNotice.style.color = '#16a34a';
+      saveNotice.classList.add('active');
+      hasEdits = false;
+      saveBtn.disabled = true;
+    } catch (err) {
+      // Clipboard API may fail on file:// — fall back to download
+      const blob = new Blob([jsContent], { type: 'application/javascript' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'songs.js';
+      a.click();
+      URL.revokeObjectURL(url);
+      saveNotice.textContent = 'Downloaded songs.js — move it to the Song-Printer folder to replace the old one.';
+      saveNotice.style.color = '#b45309';
+      saveNotice.classList.add('active');
+      hasEdits = false;
+      saveBtn.disabled = true;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
