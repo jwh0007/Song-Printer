@@ -405,11 +405,12 @@
     <input type="text" id="pageTitle" placeholder="e.g. Sunday, February 9 2026" style="width:100%;padding:10px 12px;font-size:14px;font-family:Arial,sans-serif;border:2px solid #ddd;border-radius:6px;outline:none;">
   </div>
 
-  <div class="format-toggle">
-    <input type="radio" name="format" id="formatStandard" value="standard" checked>
-    <label for="formatStandard">3-Column (Standard)</label>
-    <input type="radio" name="format" id="formatHalf" value="half">
-    <label for="formatHalf">2-Column (Cut-in-Half)</label>
+  <div style="margin-bottom: 12px;">
+    <label for="formatSelect" style="font-size:13px;font-weight:bold;margin-right:8px;">Print Format:</label>
+    <select id="formatSelect" style="padding:8px 12px;font-size:14px;font-family:Arial,sans-serif;border:2px solid #ddd;border-radius:6px;outline:none;">
+      <option value="standard">3-Column (Standard)</option>
+      <option value="half">2-Column (Cut-in-Half)</option>
+    </select>
   </div>
 
   <div class="selected-songs" id="selectedSongs"></div>
@@ -586,7 +587,7 @@
   // --- Layout Generation ---
 
   function getFormat() {
-    return document.querySelector('input[name="format"]:checked').value;
+    return document.getElementById('formatSelect').value;
   }
 
   function getSongIndex(song) {
