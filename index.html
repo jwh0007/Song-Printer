@@ -790,6 +790,7 @@
 
       // 2-column layout within each half
       const cols = document.createElement('div');
+      cols.className = 'song-columns';
       cols.style.cssText = 'flex:1; column-count:2; column-gap:0.15in; column-fill:auto; overflow:hidden;';
       cols.innerHTML = songs.map(s => buildSongHTML(s, fontSize)).join('');
       half.appendChild(cols);
@@ -826,6 +827,7 @@
     }
 
     const cols = document.createElement('div');
+    cols.className = 'song-columns';
     cols.style.cssText = 'flex:1; column-count:2; column-gap:0.15in; column-fill:auto; overflow:hidden;';
     cols.innerHTML = songs.map(s => buildSongHTML(s, fontSize)).join('');
     half.appendChild(cols);
