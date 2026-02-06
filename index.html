@@ -138,6 +138,37 @@
 
     .btn-secondary:hover { background: #d0d0d0; }
 
+    .format-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .format-toggle label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .format-toggle label:hover {
+      border-color: #4a90d9;
+    }
+
+    .format-toggle input[type="radio"] { display: none; }
+
+    .format-toggle input[type="radio"]:checked + label {
+      border-color: #1a56db;
+      background: #e8f0fe;
+      color: #1a56db;
+      font-weight: bold;
+    }
+
     .font-size-info {
       font-size: 12px;
       color: #888;
@@ -232,6 +263,28 @@
       min-height: 0;
     }
 
+    /* Half-page (cut-in-half) format */
+    .print-page.half-page-format {
+      width: 10in;
+      height: 7.5in;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .print-page.half-page-format .song-columns {
+      column-count: 2;
+      column-gap: 0.5in;
+    }
+
+    .half-page-divider {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      height: 100%;
+      border-left: 1px dashed #ccc;
+      pointer-events: none;
+    }
+
     .song-block {
       break-inside: avoid;
       margin-bottom: 8px;
@@ -319,6 +372,21 @@
         page-break-after: auto;
       }
 
+      .half-page-divider {
+        display: none;
+      }
+
+      .print-page.half-page-format {
+        width: 11in;
+        height: 8.5in;
+        padding: 0.5in;
+      }
+
+      .print-page.half-page-format .song-columns {
+        column-count: 2;
+        column-gap: 1in;
+      }
+
       /* margin: 0 removes browser headers/footers (URL, date, page numbers) */
       @page {
         size: 11in 8.5in;
@@ -335,6 +403,13 @@
 
   <div style="margin-bottom: 12px;">
     <input type="text" id="pageTitle" placeholder="e.g. Sunday, February 9 2026" style="width:100%;padding:10px 12px;font-size:14px;font-family:Arial,sans-serif;border:2px solid #ddd;border-radius:6px;outline:none;">
+  </div>
+
+  <div class="format-toggle">
+    <input type="radio" name="format" id="formatStandard" value="standard" checked>
+    <label for="formatStandard">3-Column (Standard)</label>
+    <input type="radio" name="format" id="formatHalf" value="half">
+    <label for="formatHalf">2-Column (Cut-in-Half)</label>
   </div>
 
   <div class="selected-songs" id="selectedSongs"></div>
@@ -510,6 +585,10 @@
 
   // --- Layout Generation ---
 
+  function getFormat() {
+    return document.querySelector('input[name="format"]:checked').value;
+  }
+
   function getSongIndex(song) {
     return SONGS.findIndex(s => s.title === song.title);
   }
@@ -537,10 +616,6 @@
 
   function contentFits(page) {
     const columns = page.querySelector('.song-columns');
-    // With CSS multi-column + fixed height, overflow creates extra columns
-    // beyond the 3 we want. Detect this by checking if the content's actual
-    // rendered width exceeds the container width (meaning a 4th+ column exists).
-    // scrollWidth > clientWidth means horizontal overflow = doesn't fit.
     return columns.scrollWidth <= columns.clientWidth + 1;
   }
 
@@ -548,9 +623,9 @@
     return document.getElementById('pageTitle').value.trim();
   }
 
-  function createPage(songs, fontSize, showHeader) {
+  function createPage(songs, fontSize, showHeader, isHalfPage) {
     const page = document.createElement('div');
-    page.className = 'print-page';
+    page.className = 'print-page' + (isHalfPage ? ' half-page-format' : '');
 
     if (showHeader) {
       const title = getPageTitle();
@@ -566,13 +641,20 @@
     cols.className = 'song-columns';
     cols.innerHTML = songs.map(s => buildSongHTML(s, fontSize)).join('');
     page.appendChild(cols);
+
+    if (isHalfPage) {
+      const divider = document.createElement('div');
+      divider.className = 'half-page-divider';
+      page.appendChild(divider);
+    }
+
     return page;
   }
 
-  function addPageLabel(container, pageNum, totalPages) {
+  function addPageLabel(container, text) {
     const label = document.createElement('div');
     label.className = 'page-label';
-    label.textContent = `Page ${pageNum} of ${totalPages}`;
+    label.textContent = text;
     container.appendChild(label);
   }
 
@@ -583,13 +665,22 @@
       return;
     }
 
-    // Try font sizes from 11 down to 9 in 0.5 steps
+    if (getFormat() === 'half') {
+      generateHalfPageLayout();
+    } else {
+      generateStandardLayout();
+    }
+  }
+
+  // --- Standard 3-column layout ---
+
+  function generateStandardLayout() {
     const sizes = [11, 10.5, 10, 9.5, 9];
     let bestSize = 9;
     let fitsOnOnePage = false;
 
     for (const size of sizes) {
-      const page = createPage(selectedSongs, size, true);
+      const page = createPage(selectedSongs, size, true, false);
       previewContainer.innerHTML = '';
       previewContainer.appendChild(page);
 
@@ -603,38 +694,227 @@
     if (fitsOnOnePage) {
       fontInfo.textContent = `Font size: ${bestSize}pt — fits on 1 page`;
     } else {
-      // At 9pt it doesn't fit — split across pages
       splitIntoPages(selectedSongs, 9);
     }
   }
 
   function splitIntoPages(songs, fontSize) {
-    // Find how many songs fit on page 1 (with header)
     for (let splitAt = songs.length - 1; splitAt >= 1; splitAt--) {
       const page1Songs = songs.slice(0, splitAt);
-      const testPage = createPage(page1Songs, fontSize, true);
+      const testPage = createPage(page1Songs, fontSize, true, false);
       previewContainer.innerHTML = '';
       previewContainer.appendChild(testPage);
 
       if (contentFits(testPage)) {
-        // page1Songs fit — now build the final 2-page layout
         const page2Songs = songs.slice(splitAt);
-
         previewContainer.innerHTML = '';
-        addPageLabel(previewContainer, 1, 2);
-        previewContainer.appendChild(createPage(page1Songs, fontSize, true));
-        addPageLabel(previewContainer, 2, 2);
-        previewContainer.appendChild(createPage(page2Songs, fontSize, false));
-
+        addPageLabel(previewContainer, 'Page 1 of 2');
+        previewContainer.appendChild(createPage(page1Songs, fontSize, true, false));
+        addPageLabel(previewContainer, 'Page 2 of 2');
+        previewContainer.appendChild(createPage(page2Songs, fontSize, false, false));
         fontInfo.textContent = `Font size: ${fontSize}pt — ${songs.length} songs across 2 pages`;
         return;
       }
     }
 
-    // Fallback: just show everything on one page
     previewContainer.innerHTML = '';
-    previewContainer.appendChild(createPage(songs, fontSize, true));
+    previewContainer.appendChild(createPage(songs, fontSize, true, false));
     fontInfo.textContent = `Font size: ${fontSize}pt`;
+  }
+
+  // --- Half-page (cut-in-half) layout ---
+  // Each printed page has 2 columns with identical content on left and right.
+  // When you cut the paper in half vertically, you get two identical half-sheets.
+  // If songs don't fit on one page, we use front+back (double-sided) so cutting
+  // still produces two identical double-sided half-sheets.
+
+  function generateHalfPageLayout() {
+    // In half-page mode, each "half" is 5in wide x 7.5in tall (after margins).
+    // We render as a single column that must fit in half the page.
+    // We duplicate the content into both columns via CSS.
+
+    // Try font sizes from largest down
+    const sizes = [14, 13.5, 13, 12.5, 12, 11.5, 11, 10.5, 10, 9.5, 9, 8.5, 8];
+    let bestSize = 8;
+    let fitResult = null;
+
+    for (const size of sizes) {
+      const result = tryHalfPageLayout(selectedSongs, size);
+      if (result) {
+        bestSize = size;
+        fitResult = result;
+        break;
+      }
+    }
+
+    // Render the final layout
+    previewContainer.innerHTML = '';
+
+    if (!fitResult) {
+      // Fallback at smallest size
+      fitResult = { sheets: [selectedSongs], size: bestSize };
+    }
+
+    const sheets = fitResult.sheets;
+    const totalPrintPages = sheets.length * 2; // front + back for each sheet (back may be blank)
+    let pageNum = 0;
+
+    for (let s = 0; s < sheets.length; s++) {
+      const sheetSongs = sheets[s];
+
+      // Front side: has header on first sheet
+      const showHeader = (s === 0);
+      addPageLabel(previewContainer, `Sheet ${s + 1} — Front (songs appear in both halves)`);
+
+      const frontPage = createHalfPage(sheetSongs, bestSize, showHeader);
+      previewContainer.appendChild(frontPage);
+
+      // Back side: only needed if content overflows front
+      // Check if all songs fit on the front single-column area
+      const backSongs = getBackPageSongs(sheetSongs, bestSize, showHeader);
+      if (backSongs && backSongs.length > 0) {
+        addPageLabel(previewContainer, `Sheet ${s + 1} — Back`);
+        const backPage = createHalfPage(backSongs, bestSize, false);
+        previewContainer.appendChild(backPage);
+      }
+    }
+
+    fontInfo.textContent = `Format: Cut-in-Half | Font size: ${bestSize}pt — ${selectedSongs.length} songs`;
+  }
+
+  function createHalfPage(songs, fontSize, showHeader) {
+    // Build a page where left and right halves are identical
+    const page = document.createElement('div');
+    page.className = 'print-page half-page-format';
+    page.style.position = 'relative';
+
+    // We'll create two side-by-side containers, each with identical content
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'display:flex; width:100%; height:100%; gap:0;';
+
+    for (let side = 0; side < 2; side++) {
+      const half = document.createElement('div');
+      half.style.cssText = 'width:50%; height:100%; overflow:hidden; display:flex; flex-direction:column;' +
+        (side === 0 ? 'padding-right:0.2in;' : 'padding-left:0.2in;');
+
+      if (showHeader) {
+        const title = getPageTitle();
+        if (title) {
+          const header = document.createElement('div');
+          header.className = 'page-header';
+          header.style.fontSize = (fontSize * 0.9) + 'pt';
+          header.textContent = title;
+          half.appendChild(header);
+        }
+      }
+
+      const content = document.createElement('div');
+      content.style.cssText = 'flex:1; overflow:hidden;';
+      content.innerHTML = songs.map(s => buildSongHTML(s, fontSize)).join('');
+      half.appendChild(content);
+      wrapper.appendChild(half);
+    }
+
+    page.appendChild(wrapper);
+
+    // Dashed center line for cutting guide
+    const divider = document.createElement('div');
+    divider.className = 'half-page-divider';
+    page.appendChild(divider);
+
+    return page;
+  }
+
+  function getBackPageSongs(songs, fontSize, showHeader) {
+    // Test if all songs fit on one half-page column
+    const testPage = document.createElement('div');
+    testPage.className = 'print-page half-page-format';
+    testPage.style.cssText = 'position:absolute; left:-9999px; top:0;';
+
+    const half = document.createElement('div');
+    half.style.cssText = 'width:50%; height:100%; overflow:hidden; display:flex; flex-direction:column; padding-right:0.2in;';
+
+    if (showHeader) {
+      const title = getPageTitle();
+      if (title) {
+        const header = document.createElement('div');
+        header.className = 'page-header';
+        header.style.fontSize = (fontSize * 0.9) + 'pt';
+        header.textContent = title;
+        half.appendChild(header);
+      }
+    }
+
+    const content = document.createElement('div');
+    content.style.cssText = 'flex:1; overflow:hidden;';
+    content.innerHTML = songs.map(s => buildSongHTML(s, fontSize)).join('');
+    half.appendChild(content);
+    testPage.appendChild(half);
+    document.body.appendChild(testPage);
+
+    // Check if content overflows
+    const overflows = content.scrollHeight > content.clientHeight + 1;
+    document.body.removeChild(testPage);
+
+    if (!overflows) return null;
+
+    // Find which songs overflow — binary search for split point
+    for (let splitAt = songs.length - 1; splitAt >= 1; splitAt--) {
+      const frontSongs = songs.slice(0, splitAt);
+      if (halfPageFits(frontSongs, fontSize, showHeader)) {
+        return songs.slice(splitAt);
+      }
+    }
+    return songs.slice(1);
+  }
+
+  function halfPageFits(songs, fontSize, showHeader) {
+    const testPage = document.createElement('div');
+    testPage.className = 'print-page half-page-format';
+    testPage.style.cssText = 'position:absolute; left:-9999px; top:0;';
+
+    const half = document.createElement('div');
+    half.style.cssText = 'width:50%; height:100%; overflow:hidden; display:flex; flex-direction:column; padding-right:0.2in;';
+
+    if (showHeader) {
+      const title = getPageTitle();
+      if (title) {
+        const header = document.createElement('div');
+        header.className = 'page-header';
+        header.style.fontSize = (fontSize * 0.9) + 'pt';
+        header.textContent = title;
+        half.appendChild(header);
+      }
+    }
+
+    const content = document.createElement('div');
+    content.style.cssText = 'flex:1; overflow:hidden;';
+    content.innerHTML = songs.map(s => buildSongHTML(s, fontSize)).join('');
+    half.appendChild(content);
+    testPage.appendChild(half);
+    document.body.appendChild(testPage);
+
+    const fits = content.scrollHeight <= content.clientHeight + 1;
+    document.body.removeChild(testPage);
+    return fits;
+  }
+
+  function tryHalfPageLayout(songs, fontSize) {
+    // Check if all songs fit on one half-page (front only)
+    if (halfPageFits(songs, fontSize, true)) {
+      return { sheets: [songs], size: fontSize };
+    }
+
+    // Try front+back of one sheet (2 half-pages worth of content)
+    for (let splitAt = songs.length - 1; splitAt >= 1; splitAt--) {
+      const frontSongs = songs.slice(0, splitAt);
+      const backSongs = songs.slice(splitAt);
+      if (halfPageFits(frontSongs, fontSize, true) && halfPageFits(backSongs, fontSize, false)) {
+        return { sheets: [songs], size: fontSize };
+      }
+    }
+
+    return null; // doesn't fit at this font size
   }
 
   // --- Buttons ---
