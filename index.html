@@ -724,19 +724,14 @@
   }
 
   // --- Half-page (cut-in-half) layout ---
-  // Each printed page has 2 columns with identical content on left and right.
-  // When you cut the paper in half vertically, you get two identical half-sheets.
-  // If songs don't fit on one page, we use front+back (double-sided) so cutting
-  // still produces two identical double-sided half-sheets.
+  // Full landscape page has 4 columns: [col1 col2 | col1 col2]
+  // Left half and right half are identical (each with 2 columns).
+  // Cut down the middle to get two identical half-sheets.
+  // If songs overflow one side, use front+back (double-sided) printing.
 
   function generateHalfPageLayout() {
-    // In half-page mode, each "half" is 5in wide x 7.5in tall (after margins).
-    // We render as a single column that must fit in half the page.
-    // We duplicate the content into both columns via CSS.
-
-    // Try font sizes from largest down
-    const sizes = [14, 13.5, 13, 12.5, 12, 11.5, 11, 10.5, 10, 9.5, 9, 8.5, 8];
-    let bestSize = 8;
+    const sizes = [14, 13.5, 13, 12.5, 12, 11.5, 11, 10.5, 10, 9.5, 9, 8.5, 8, 7.5, 7];
+    let bestSize = 7;
     let fitResult = null;
 
     for (const size of sizes) {
@@ -748,77 +743,61 @@
       }
     }
 
-    // Render the final layout
     previewContainer.innerHTML = '';
 
     if (!fitResult) {
-      // Fallback at smallest size
-      fitResult = { sheets: [selectedSongs], size: bestSize };
+      fitResult = { frontSongs: selectedSongs, backSongs: [] };
     }
 
-    const sheets = fitResult.sheets;
-    const totalPrintPages = sheets.length * 2; // front + back for each sheet (back may be blank)
-    let pageNum = 0;
+    // Front page
+    addPageLabel(previewContainer, 'Front (both halves are identical \u2014 cut down the middle)');
+    previewContainer.appendChild(createHalfPage(fitResult.frontSongs, bestSize, true));
 
-    for (let s = 0; s < sheets.length; s++) {
-      const sheetSongs = sheets[s];
-
-      // Front side: has header on first sheet
-      const showHeader = (s === 0);
-      addPageLabel(previewContainer, `Sheet ${s + 1} — Front (songs appear in both halves)`);
-
-      const frontPage = createHalfPage(sheetSongs, bestSize, showHeader);
-      previewContainer.appendChild(frontPage);
-
-      // Back side: only needed if content overflows front
-      // Check if all songs fit on the front single-column area
-      const backSongs = getBackPageSongs(sheetSongs, bestSize, showHeader);
-      if (backSongs && backSongs.length > 0) {
-        addPageLabel(previewContainer, `Sheet ${s + 1} — Back`);
-        const backPage = createHalfPage(backSongs, bestSize, false);
-        previewContainer.appendChild(backPage);
-      }
+    // Back page only if needed
+    if (fitResult.backSongs && fitResult.backSongs.length > 0) {
+      addPageLabel(previewContainer, 'Back (print double-sided, then cut)');
+      previewContainer.appendChild(createHalfPage(fitResult.backSongs, bestSize, false));
     }
 
-    fontInfo.textContent = `Format: Cut-in-Half | Font size: ${bestSize}pt — ${selectedSongs.length} songs`;
+    const pages = fitResult.backSongs && fitResult.backSongs.length > 0 ? 'front + back' : '1 side';
+    fontInfo.textContent = `Format: Cut-in-Half | Font size: ${bestSize}pt | ${pages}`;
   }
 
   function createHalfPage(songs, fontSize, showHeader) {
-    // Build a page where left and right halves are identical
     const page = document.createElement('div');
     page.className = 'print-page half-page-format';
     page.style.position = 'relative';
 
-    // We'll create two side-by-side containers, each with identical content
+    // Two identical halves side by side, each with 2-column layout
     const wrapper = document.createElement('div');
-    wrapper.style.cssText = 'display:flex; width:100%; height:100%; gap:0;';
+    wrapper.style.cssText = 'display:flex; width:100%; height:100%;';
 
     for (let side = 0; side < 2; side++) {
       const half = document.createElement('div');
       half.style.cssText = 'width:50%; height:100%; overflow:hidden; display:flex; flex-direction:column;' +
-        (side === 0 ? 'padding-right:0.2in;' : 'padding-left:0.2in;');
+        (side === 0 ? 'padding-right:0.15in;' : 'padding-left:0.15in;');
 
       if (showHeader) {
         const title = getPageTitle();
         if (title) {
           const header = document.createElement('div');
           header.className = 'page-header';
-          header.style.fontSize = (fontSize * 0.9) + 'pt';
+          header.style.fontSize = Math.min(fontSize, 11) + 'pt';
           header.textContent = title;
           half.appendChild(header);
         }
       }
 
-      const content = document.createElement('div');
-      content.style.cssText = 'flex:1; overflow:hidden;';
-      content.innerHTML = songs.map(s => buildSongHTML(s, fontSize)).join('');
-      half.appendChild(content);
+      // 2-column layout within each half
+      const cols = document.createElement('div');
+      cols.style.cssText = 'flex:1; column-count:2; column-gap:0.15in; column-fill:auto; overflow:hidden;';
+      cols.innerHTML = songs.map(s => buildSongHTML(s, fontSize)).join('');
+      half.appendChild(cols);
       wrapper.appendChild(half);
     }
 
     page.appendChild(wrapper);
 
-    // Dashed center line for cutting guide
     const divider = document.createElement('div');
     divider.className = 'half-page-divider';
     page.appendChild(divider);
@@ -826,96 +805,55 @@
     return page;
   }
 
-  function getBackPageSongs(songs, fontSize, showHeader) {
-    // Test if all songs fit on one half-page column
-    const testPage = document.createElement('div');
-    testPage.className = 'print-page half-page-format';
-    testPage.style.cssText = 'position:absolute; left:-9999px; top:0;';
-
-    const half = document.createElement('div');
-    half.style.cssText = 'width:50%; height:100%; overflow:hidden; display:flex; flex-direction:column; padding-right:0.2in;';
-
-    if (showHeader) {
-      const title = getPageTitle();
-      if (title) {
-        const header = document.createElement('div');
-        header.className = 'page-header';
-        header.style.fontSize = (fontSize * 0.9) + 'pt';
-        header.textContent = title;
-        half.appendChild(header);
-      }
-    }
-
-    const content = document.createElement('div');
-    content.style.cssText = 'flex:1; overflow:hidden;';
-    content.innerHTML = songs.map(s => buildSongHTML(s, fontSize)).join('');
-    half.appendChild(content);
-    testPage.appendChild(half);
-    document.body.appendChild(testPage);
-
-    // Check if content overflows
-    const overflows = content.scrollHeight > content.clientHeight + 1;
-    document.body.removeChild(testPage);
-
-    if (!overflows) return null;
-
-    // Find which songs overflow — binary search for split point
-    for (let splitAt = songs.length - 1; splitAt >= 1; splitAt--) {
-      const frontSongs = songs.slice(0, splitAt);
-      if (halfPageFits(frontSongs, fontSize, showHeader)) {
-        return songs.slice(splitAt);
-      }
-    }
-    return songs.slice(1);
-  }
-
   function halfPageFits(songs, fontSize, showHeader) {
+    // Test if songs fit in one half (2 columns within half the page width)
     const testPage = document.createElement('div');
     testPage.className = 'print-page half-page-format';
     testPage.style.cssText = 'position:absolute; left:-9999px; top:0;';
 
     const half = document.createElement('div');
-    half.style.cssText = 'width:50%; height:100%; overflow:hidden; display:flex; flex-direction:column; padding-right:0.2in;';
+    half.style.cssText = 'width:50%; height:100%; overflow:hidden; display:flex; flex-direction:column; padding-right:0.15in;';
 
     if (showHeader) {
       const title = getPageTitle();
       if (title) {
         const header = document.createElement('div');
         header.className = 'page-header';
-        header.style.fontSize = (fontSize * 0.9) + 'pt';
+        header.style.fontSize = Math.min(fontSize, 11) + 'pt';
         header.textContent = title;
         half.appendChild(header);
       }
     }
 
-    const content = document.createElement('div');
-    content.style.cssText = 'flex:1; overflow:hidden;';
-    content.innerHTML = songs.map(s => buildSongHTML(s, fontSize)).join('');
-    half.appendChild(content);
+    const cols = document.createElement('div');
+    cols.style.cssText = 'flex:1; column-count:2; column-gap:0.15in; column-fill:auto; overflow:hidden;';
+    cols.innerHTML = songs.map(s => buildSongHTML(s, fontSize)).join('');
+    half.appendChild(cols);
     testPage.appendChild(half);
     document.body.appendChild(testPage);
 
-    const fits = content.scrollHeight <= content.clientHeight + 1;
+    // Check if 2-column content overflows (would create a 3rd column)
+    const fits = cols.scrollWidth <= cols.clientWidth + 1;
     document.body.removeChild(testPage);
     return fits;
   }
 
   function tryHalfPageLayout(songs, fontSize) {
-    // Check if all songs fit on one half-page (front only)
+    // Try all songs on front only
     if (halfPageFits(songs, fontSize, true)) {
-      return { sheets: [songs], size: fontSize };
+      return { frontSongs: songs, backSongs: [] };
     }
 
-    // Try front+back of one sheet (2 half-pages worth of content)
+    // Try splitting across front + back
     for (let splitAt = songs.length - 1; splitAt >= 1; splitAt--) {
-      const frontSongs = songs.slice(0, splitAt);
-      const backSongs = songs.slice(splitAt);
-      if (halfPageFits(frontSongs, fontSize, true) && halfPageFits(backSongs, fontSize, false)) {
-        return { sheets: [songs], size: fontSize };
+      const front = songs.slice(0, splitAt);
+      const back = songs.slice(splitAt);
+      if (halfPageFits(front, fontSize, true) && halfPageFits(back, fontSize, false)) {
+        return { frontSongs: front, backSongs: back };
       }
     }
 
-    return null; // doesn't fit at this font size
+    return null;
   }
 
   // --- Buttons ---
