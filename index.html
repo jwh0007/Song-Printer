@@ -819,7 +819,7 @@
 
     for (let side = 0; side < 2; side++) {
       const half = document.createElement('div');
-      half.style.cssText = 'width:50%; height:100%; overflow:hidden; display:flex; flex-direction:column;' +
+      half.style.cssText = 'width:50%; height:100%; overflow:hidden;' +
         (side === 0 ? 'padding-right:0.15in;' : 'padding-left:0.15in;');
 
       if (showHeader) {
@@ -836,13 +836,23 @@
       // 2-column layout within each half
       const cols = document.createElement('div');
       cols.className = 'song-columns';
-      cols.style.cssText = 'flex:1; column-count:2; column-gap:0.15in; column-fill:auto; overflow:hidden;';
+      cols.style.cssText = 'column-count:2; column-gap:0.15in; column-fill:auto; overflow:hidden;';
       cols.innerHTML = songs.map(s => buildSongHTML(s, fontSize)).join('');
       half.appendChild(cols);
       wrapper.appendChild(half);
     }
 
     page.appendChild(wrapper);
+
+    // Measure header and set explicit column heights (multi-column needs fixed height)
+    document.body.appendChild(page);
+    wrapper.querySelectorAll('.song-columns').forEach(cols => {
+      const half = cols.parentElement;
+      const header = half.querySelector('.page-header');
+      const headerH = header ? header.offsetHeight + 6 : 0;
+      cols.style.height = (half.clientHeight - headerH) + 'px';
+    });
+    document.body.removeChild(page);
 
     const divider = document.createElement('div');
     divider.className = 'half-page-divider';
@@ -852,13 +862,12 @@
   }
 
   function halfPageFits(songs, fontSize, showHeader) {
-    // Test if songs fit in one half (2 columns within half the page width)
     const testPage = document.createElement('div');
     testPage.className = 'print-page half-page-format';
     testPage.style.cssText = 'position:absolute; left:-9999px; top:0;';
 
     const half = document.createElement('div');
-    half.style.cssText = 'width:50%; height:100%; overflow:hidden; display:flex; flex-direction:column; padding-right:0.15in;';
+    half.style.cssText = 'width:50%; height:100%; overflow:hidden; padding-right:0.15in;';
 
     if (showHeader) {
       const title = getPageTitle();
@@ -873,13 +882,19 @@
 
     const cols = document.createElement('div');
     cols.className = 'song-columns';
-    cols.style.cssText = 'flex:1; column-count:2; column-gap:0.15in; column-fill:auto; overflow:hidden;';
+    cols.style.cssText = 'column-count:2; column-gap:0.15in; column-fill:auto; overflow:hidden;';
     cols.innerHTML = songs.map(s => buildSongHTML(s, fontSize)).join('');
     half.appendChild(cols);
     testPage.appendChild(half);
     document.body.appendChild(testPage);
 
-    // Check if 2-column content overflows (would create a 3rd column)
+    // Set explicit height on cols — multi-column needs a fixed height to create
+    // extra columns on overflow. flex:1 or auto height won't trigger this.
+    const header = half.querySelector('.page-header');
+    const headerH = header ? header.offsetHeight + 6 : 0;
+    cols.style.height = (half.clientHeight - headerH) + 'px';
+
+    // Now check if 2-column content overflows (would create a 3rd column)
     const fits = cols.scrollWidth <= cols.clientWidth + 1;
     document.body.removeChild(testPage);
     return fits;
