@@ -732,35 +732,80 @@
   function generateHalfPageLayout() {
     const sizes = [14, 13.5, 13, 12.5, 12, 11.5, 11, 10.5, 10, 9.5, 9, 8.5, 8, 7.5, 7];
     let bestSize = 7;
-    let fitResult = null;
 
+    // Find the largest font where we can paginate all songs
+    // (every page's worth of songs must fit on a half-page)
     for (const size of sizes) {
-      const result = tryHalfPageLayout(selectedSongs, size);
-      if (result) {
+      const pages = paginateHalfPage(selectedSongs, size);
+      if (pages) {
         bestSize = size;
-        fitResult = result;
         break;
       }
     }
 
+    const pages = paginateHalfPage(selectedSongs, bestSize);
     previewContainer.innerHTML = '';
 
-    if (!fitResult) {
-      fitResult = { frontSongs: selectedSongs, backSongs: [] };
+    if (!pages || pages.length === 0) {
+      // Fallback: one song per page at smallest size
+      for (let i = 0; i < selectedSongs.length; i++) {
+        const label = `Page ${i + 1} of ${selectedSongs.length}`;
+        addPageLabel(previewContainer, label);
+        previewContainer.appendChild(createHalfPage([selectedSongs[i]], bestSize, i === 0));
+      }
+      fontInfo.textContent = `Format: Cut-in-Half | Font size: ${bestSize}pt | ${selectedSongs.length} pages`;
+      return;
     }
 
-    // Front page
-    addPageLabel(previewContainer, 'Front (both halves are identical \u2014 cut down the middle)');
-    previewContainer.appendChild(createHalfPage(fitResult.frontSongs, bestSize, true));
-
-    // Back page only if needed
-    if (fitResult.backSongs && fitResult.backSongs.length > 0) {
-      addPageLabel(previewContainer, 'Back (print double-sided, then cut)');
-      previewContainer.appendChild(createHalfPage(fitResult.backSongs, bestSize, false));
+    // Render pages. For double-sided: pages pair as front/back of each sheet.
+    for (let i = 0; i < pages.length; i++) {
+      const isFirst = (i === 0);
+      let label;
+      if (pages.length === 1) {
+        label = 'Both halves are identical \u2014 cut down the middle';
+      } else if (pages.length === 2) {
+        label = i === 0 ? 'Front (cut down the middle)' : 'Back (print double-sided, then cut)';
+      } else {
+        // Multiple sheets: pair pages as front/back
+        const sheetNum = Math.floor(i / 2) + 1;
+        const side = (i % 2 === 0) ? 'Front' : 'Back';
+        label = `Sheet ${sheetNum} \u2014 ${side}`;
+      }
+      addPageLabel(previewContainer, label);
+      previewContainer.appendChild(createHalfPage(pages[i], bestSize, isFirst));
     }
 
-    const pages = fitResult.backSongs && fitResult.backSongs.length > 0 ? 'front + back' : '1 side';
-    fontInfo.textContent = `Format: Cut-in-Half | Font size: ${bestSize}pt | ${pages}`;
+    fontInfo.textContent = `Format: Cut-in-Half | Font size: ${bestSize}pt | ${pages.length} page${pages.length > 1 ? 's' : ''}`;
+  }
+
+  // Split songs into pages where each page's songs fit on one half-page
+  function paginateHalfPage(songs, fontSize) {
+    const pages = [];
+    let remaining = songs.slice();
+    let isFirst = true;
+
+    while (remaining.length > 0) {
+      // Find how many songs fit on this page
+      let fitCount = 0;
+      for (let n = remaining.length; n >= 1; n--) {
+        const subset = remaining.slice(0, n);
+        if (halfPageFits(subset, fontSize, isFirst)) {
+          fitCount = n;
+          break;
+        }
+      }
+
+      if (fitCount === 0) {
+        // Even one song doesn't fit at this font size
+        return null;
+      }
+
+      pages.push(remaining.slice(0, fitCount));
+      remaining = remaining.slice(fitCount);
+      isFirst = false;
+    }
+
+    return pages;
   }
 
   function createHalfPage(songs, fontSize, showHeader) {
@@ -840,23 +885,6 @@
     return fits;
   }
 
-  function tryHalfPageLayout(songs, fontSize) {
-    // Try all songs on front only
-    if (halfPageFits(songs, fontSize, true)) {
-      return { frontSongs: songs, backSongs: [] };
-    }
-
-    // Try splitting across front + back
-    for (let splitAt = songs.length - 1; splitAt >= 1; splitAt--) {
-      const front = songs.slice(0, splitAt);
-      const back = songs.slice(splitAt);
-      if (halfPageFits(front, fontSize, true) && halfPageFits(back, fontSize, false)) {
-        return { frontSongs: front, backSongs: back };
-      }
-    }
-
-    return null;
-  }
 
   // --- Buttons ---
 
