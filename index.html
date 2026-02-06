@@ -862,12 +862,15 @@
   }
 
   function halfPageFits(songs, fontSize, showHeader) {
+    // Instead of relying on CSS multi-column overflow detection (unreliable),
+    // measure total content height in a single column, then check if it
+    // fits within 2 columns of the available height.
     const testPage = document.createElement('div');
     testPage.className = 'print-page half-page-format';
     testPage.style.cssText = 'position:absolute; left:-9999px; top:0;';
 
     const half = document.createElement('div');
-    half.style.cssText = 'width:50%; height:100%; overflow:hidden; padding-right:0.15in;';
+    half.style.cssText = 'width:50%; height:100%; padding-right:0.15in;';
 
     if (showHeader) {
       const title = getPageTitle();
@@ -880,24 +883,35 @@
       }
     }
 
-    const cols = document.createElement('div');
-    cols.className = 'song-columns';
-    cols.style.cssText = 'column-count:2; column-gap:0.15in; column-fill:auto; overflow:hidden;';
-    cols.innerHTML = songs.map(s => buildSongHTML(s, fontSize)).join('');
-    half.appendChild(cols);
+    // Temporary 2-col container just to measure one column's width
+    const tempCols = document.createElement('div');
+    tempCols.style.cssText = 'column-count:2; column-gap:0.15in; height:10px;';
+    const marker = document.createElement('div');
+    marker.style.cssText = 'break-inside:avoid;';
+    marker.innerHTML = '&nbsp;';
+    tempCols.appendChild(marker);
+    half.appendChild(tempCols);
+
     testPage.appendChild(half);
     document.body.appendChild(testPage);
 
-    // Set explicit height on cols — multi-column needs a fixed height to create
-    // extra columns on overflow. flex:1 or auto height won't trigger this.
-    const header = half.querySelector('.page-header');
-    const headerH = header ? header.offsetHeight + 6 : 0;
-    cols.style.height = (half.clientHeight - headerH) + 'px';
+    const headerEl = half.querySelector('.page-header');
+    const headerH = headerEl ? headerEl.offsetHeight + 6 : 0;
+    const availableHeight = half.clientHeight - headerH;
+    const colWidth = marker.offsetWidth;
 
-    // Now check if 2-column content overflows (would create a 3rd column)
-    const fits = cols.scrollWidth <= cols.clientWidth + 1;
+    // Remove temp cols, render content at single-column width to measure height
+    half.removeChild(tempCols);
+    const content = document.createElement('div');
+    content.style.width = colWidth + 'px';
+    content.innerHTML = songs.map(s => buildSongHTML(s, fontSize)).join('');
+    half.appendChild(content);
+
+    const totalHeight = content.scrollHeight;
     document.body.removeChild(testPage);
-    return fits;
+
+    // Content fits in 2 columns if total height <= 2 * column height
+    return totalHeight <= availableHeight * 2;
   }
 
 
