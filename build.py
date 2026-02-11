@@ -139,13 +139,23 @@ def main():
     extensions = {'.odt', '.doc', '.docx'}
     files = sorted([
         f for f in os.listdir(LYRICS_DIR)
-        if os.path.splitext(f)[1].lower() in extensions and not f.startswith('~$')
+        if os.path.splitext(f)[1].lower() in extensions
+        and not f.startswith('~$')
+        and not re.search(r'chords?', os.path.splitext(f)[0], re.IGNORECASE)
     ])
 
-    print(f"Found {len(files)} song files")
+    # Also gather chord files that were filtered out, for the skip report
+    chord_name_files = sorted([
+        f for f in os.listdir(LYRICS_DIR)
+        if os.path.splitext(f)[1].lower() in extensions
+        and not f.startswith('~$')
+        and re.search(r'chords?', os.path.splitext(f)[0], re.IGNORECASE)
+    ])
+
+    print(f"Found {len(files)} lyric files ({len(chord_name_files)} chord files skipped by name)")
 
     songs = []
-    skipped = []
+    skipped = [f"{f} (chord file by name)" for f in chord_name_files]
 
     for filename in files:
         filepath = os.path.join(LYRICS_DIR, filename)

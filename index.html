@@ -197,6 +197,93 @@
 
     .save-notice.active { display: block; }
 
+    /* Song catalog */
+    .catalog-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .btn-catalog {
+      padding: 6px 14px;
+      font-size: 13px;
+      font-family: Arial, sans-serif;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .btn-catalog:hover {
+      border-color: #4a90d9;
+      background: #e8f0fe;
+    }
+
+    .btn-catalog.active {
+      border-color: #1a56db;
+      background: #e8f0fe;
+      color: #1a56db;
+      font-weight: bold;
+    }
+
+    .catalog {
+      display: none;
+      max-height: 400px;
+      overflow-y: auto;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      padding: 8px 0;
+      margin-bottom: 12px;
+      background: #fafafa;
+    }
+
+    .catalog.active {
+      display: block;
+    }
+
+    .catalog-count {
+      font-size: 12px;
+      color: #888;
+    }
+
+    .catalog-letter {
+      font-size: 12px;
+      font-weight: bold;
+      color: #999;
+      padding: 6px 14px 2px;
+      text-transform: uppercase;
+      position: sticky;
+      top: 0;
+      background: #fafafa;
+    }
+
+    .catalog-item {
+      padding: 5px 14px 5px 24px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .catalog-item:hover {
+      background: #e8f0fe;
+      color: #1a56db;
+    }
+
+    .catalog-item.already-added {
+      color: #aaa;
+      cursor: default;
+    }
+
+    .catalog-item.already-added:hover {
+      background: transparent;
+      color: #aaa;
+    }
+
+    @media print {
+      .catalog, .catalog-toggle { display: none !important; }
+    }
+
     .edit-hint {
       font-size: 12px;
       color: #999;
@@ -398,7 +485,7 @@
 <body>
 
 <div class="controls">
-  <h1>Song Printer</h1>
+  <h1 style="display:flex;align-items:center;gap:12px;">Song Printer <a href="chords.html" style="font-size:13px;font-weight:normal;color:#1a56db;text-decoration:none;">See Chords &rarr;</a></h1>
   <p>Type song names to add them. Press Enter or click a suggestion to add a song.</p>
 
   <div style="margin-bottom: 12px;">
@@ -419,6 +506,12 @@
     <input type="text" id="songInput" placeholder="Start typing a song name..." autocomplete="off">
     <div class="suggestions" id="suggestions"></div>
   </div>
+
+  <div class="catalog-toggle">
+    <button class="btn-catalog" id="catalogToggle">Browse All Songs</button>
+    <span class="catalog-count" id="catalogCount"></span>
+  </div>
+  <div class="catalog" id="catalog"></div>
 
   <div class="buttons">
     <button class="btn btn-primary" id="generateBtn">Generate Layout</button>
@@ -583,6 +676,63 @@
       hideSuggestions();
     }
   });
+
+  // --- Song Catalog ---
+
+  const catalogEl = document.getElementById('catalog');
+  const catalogToggle = document.getElementById('catalogToggle');
+  const catalogCount = document.getElementById('catalogCount');
+
+  function renderCatalog() {
+    const sorted = SONGS.map((song, idx) => ({ song, idx }))
+      .sort((a, b) => a.song.title.toLowerCase().localeCompare(b.song.title.toLowerCase()));
+
+    catalogCount.textContent = `${sorted.length} songs`;
+
+    let html = '';
+    let currentLetter = '';
+    for (const { song, idx } of sorted) {
+      const letter = song.title.charAt(0).toUpperCase();
+      if (letter !== currentLetter) {
+        currentLetter = letter;
+        html += `<div class="catalog-letter">${escapeHtml(letter)}</div>`;
+      }
+      const added = selectedSongs.some(s => s.title === song.title);
+      html += `<div class="catalog-item${added ? ' already-added' : ''}" data-idx="${idx}">${escapeHtml(song.title)}</div>`;
+    }
+    catalogEl.innerHTML = html;
+  }
+
+  catalogToggle.addEventListener('click', () => {
+    const isOpen = catalogEl.classList.contains('active');
+    if (isOpen) {
+      catalogEl.classList.remove('active');
+      catalogToggle.classList.remove('active');
+    } else {
+      renderCatalog();
+      catalogEl.classList.add('active');
+      catalogToggle.classList.add('active');
+    }
+  });
+
+  catalogEl.addEventListener('click', (e) => {
+    const item = e.target.closest('.catalog-item');
+    if (!item || item.classList.contains('already-added')) return;
+    const idx = parseInt(item.dataset.idx);
+    if (idx >= 0 && idx < SONGS.length) {
+      addSong(SONGS[idx]);
+      renderCatalog();
+    }
+  });
+
+  // Update catalog when songs are added/removed
+  const origRenderSelected = renderSelectedSongs;
+  renderSelectedSongs = function() {
+    origRenderSelected();
+    if (catalogEl.classList.contains('active')) {
+      renderCatalog();
+    }
+  };
 
   // --- Layout Generation ---
 

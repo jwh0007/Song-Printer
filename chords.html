@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chord Viewer</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    .controls {
+      max-width: 700px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .controls h1 { font-size: 20px; margin-bottom: 12px; }
+
+    .search-area {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    #songInput {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      outline: none;
+    }
+
+    #songInput:focus { border-color: #4a90d9; }
+
+    .suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0; right: 0;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 10;
+      display: none;
+    }
+
+    .suggestions.active { display: block; }
+
+    .suggestion-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .suggestion-item:hover,
+    .suggestion-item.highlighted { background: #e8f0fe; }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .transpose-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .transpose-controls button {
+      width: 32px; height: 32px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .transpose-controls button:hover {
+      border-color: #4a90d9;
+      background: #e8f0fe;
+    }
+
+    .key-display {
+      font-size: 14px;
+      font-weight: bold;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    .font-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .font-controls button {
+      width: 28px; height: 28px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .font-controls button:hover {
+      border-color: #4a90d9;
+      background: #e8f0fe;
+    }
+
+    .font-controls span { font-size: 12px; color: #666; }
+
+    .btn {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-secondary { background: #e5e5e5; color: #333; }
+    .btn-secondary:hover { background: #d0d0d0; }
+
+    .btn-edit { background: #f59e0b; color: #fff; }
+    .btn-edit:hover { background: #d97706; }
+    .btn-edit.active { background: #dc2626; }
+    .btn-edit.active:hover { background: #b91c1c; }
+
+    .btn-undo { background: #6366f1; color: #fff; }
+    .btn-undo:hover { background: #4f46e5; }
+    .btn-undo:disabled { background: #c7c7c7; color: #999; cursor: default; }
+
+    .add-chord-area {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .add-chord-area.active { display: flex; }
+
+    #newChordInput {
+      width: 80px;
+      padding: 6px 8px;
+      font-size: 14px;
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: bold;
+      border: 2px solid #1a56db;
+      border-radius: 6px;
+      outline: none;
+      color: #1a56db;
+      text-align: center;
+    }
+
+    #newChordInput:focus { border-color: #4338ca; }
+
+    #newChordInput.ready {
+      background: #fbbf24;
+      color: #000;
+      border-color: #f59e0b;
+    }
+
+    .add-chord-label { font-size: 13px; color: #555; }
+
+    .btn-save { background: #16a34a; color: #fff; }
+    .btn-save:hover { background: #15803d; }
+
+    .save-notice {
+      font-size: 12px;
+      color: #16a34a;
+      margin-top: 8px;
+      display: none;
+    }
+
+    .save-notice.active { display: block; }
+
+    .edit-help {
+      font-size: 11px;
+      color: #888;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .edit-help.active { display: block; }
+
+    /* Song display */
+    #songDisplay {
+      max-width: 800px;
+      margin: 0 auto 40px;
+      padding: 20px;
+    }
+
+    .song-container {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+
+    .song-title-display {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #eee;
+    }
+
+    .section-block { margin-bottom: 20px; }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: bold;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    /* View mode: monospace chord/lyric pairs */
+    .chord-line-pair {
+      position: relative;
+      white-space: pre;
+      font-family: 'Courier New', Courier, monospace;
+      line-height: 1.2;
+      margin-bottom: 2px;
+    }
+
+    .chord-row {
+      color: #1a56db;
+      font-weight: bold;
+      height: 1.3em;
+    }
+
+    .lyric-row { color: #333; }
+    .empty-line { height: 0.8em; }
+
+    /* Edit mode: character-column layout */
+    .edit-line {
+      margin-bottom: 6px;
+      line-height: 1.3;
+      white-space: pre;
+      font-family: 'Courier New', Courier, monospace;
+    }
+
+    .edit-chord-row, .edit-lyric-row {
+      display: block;
+    }
+
+    .edit-chord-row {
+      color: #1a56db;
+      font-weight: bold;
+      height: 1.3em;
+    }
+
+    .edit-char-col {
+      display: inline-block;
+      text-align: center;
+      min-width: 0.62em;
+      cursor: pointer;
+    }
+
+    .edit-chord-cell {
+      cursor: grab;
+      user-select: none;
+    }
+
+    .edit-chord-cell:hover {
+      background: #dbeafe;
+      border-radius: 2px;
+    }
+
+    .edit-chord-cell.selected {
+      background: #fbbf24;
+      color: #000;
+      border-radius: 2px;
+    }
+
+    body.chord-grabbed .edit-lyric-cell:hover {
+      background: #bbf7d0;
+      border-radius: 2px;
+      outline: 1px solid #86efac;
+    }
+
+    .edit-empty-line { height: 1em; }
+
+    body.chord-grabbed { cursor: grabbing !important; }
+    body.chord-grabbed .edit-lyric-cell { cursor: pointer !important; }
+    body.chord-grabbed .edit-chord-cell { cursor: grabbing !important; }
+
+    .edit-space {
+      display: inline-block;
+      min-width: 0.62em;
+    }
+
+    /* Song catalog */
+    .catalog {
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .catalog-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .catalog-header h2 {
+      font-size: 16px;
+      color: #555;
+    }
+
+    .catalog-count {
+      font-size: 13px;
+      color: #999;
+    }
+
+    .catalog-list {
+      column-count: 2;
+      column-gap: 24px;
+    }
+
+    .catalog-letter {
+      font-size: 13px;
+      font-weight: bold;
+      color: #999;
+      margin-top: 10px;
+      margin-bottom: 4px;
+      break-after: avoid;
+    }
+
+    .catalog-letter:first-child { margin-top: 0; }
+
+    .catalog-item {
+      padding: 6px 8px;
+      cursor: pointer;
+      font-size: 14px;
+      border-radius: 4px;
+      break-inside: avoid;
+    }
+
+    .catalog-item:hover {
+      background: #e8f0fe;
+      color: #1a56db;
+    }
+
+    .btn-catalog {
+      background: #6366f1;
+      color: #fff;
+      font-size: 12px;
+      padding: 4px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-catalog:hover { background: #4f46e5; }
+
+    @media (max-width: 500px) {
+      .catalog-list { column-count: 1; }
+    }
+
+    /* Delete zone */
+    .delete-zone {
+      display: none;
+      text-align: center;
+      padding: 8px;
+      margin-top: 10px;
+      border: 2px dashed #ef4444;
+      border-radius: 6px;
+      color: #ef4444;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .delete-zone.active { display: block; }
+    .delete-zone:hover { background: #fef2f2; }
+
+    /* Print styles */
+    @media print {
+      body { background: none; }
+      .controls { display: none !important; }
+      #songDisplay { margin: 0; padding: 0; }
+      .song-container { box-shadow: none; padding: 0; }
+      .chord-row { color: #000; }
+      .delete-zone { display: none !important; }
+      .catalog { display: none !important; }
+      @page { size: letter portrait; margin: 0.5in; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="controls">
+  <h1 style="display:flex;align-items:center;gap:12px;">Chord Viewer <a href="index.html" style="font-size:13px;font-weight:normal;color:#1a56db;text-decoration:none;">See Lyrics Only &rarr;</a></h1>
+
+  <div class="search-area">
+    <input type="text" id="songInput" placeholder="Start typing a song name..." autocomplete="off">
+    <div class="suggestions" id="suggestions"></div>
+  </div>
+
+  <div class="toolbar">
+    <div class="transpose-controls">
+      <button id="transposeDown" title="Transpose down">-</button>
+      <span class="key-display" id="keyDisplay">Key: --</span>
+      <button id="transposeUp" title="Transpose up">+</button>
+    </div>
+
+    <div class="font-controls">
+      <button id="fontDown" title="Smaller text">A-</button>
+      <span id="fontSizeLabel">14px</span>
+      <button id="fontUp" title="Larger text">A+</button>
+    </div>
+
+    <button class="btn btn-edit" id="editBtn">Edit</button>
+    <button class="btn btn-undo" id="undoBtn" disabled title="Undo (Ctrl+Z)">Undo</button>
+    <button class="btn btn-save" id="saveBtn">Download</button>
+    <button class="btn btn-secondary" id="printBtn">Print</button>
+    <button class="btn btn-catalog" id="catalogBtn" title="Show all songs">All Songs</button>
+  </div>
+  <div class="edit-help" id="editHelp">
+    Click a <b style="color:#1a56db">chord</b> to move it, or type a new chord below and click a letter to place it. Red zone = delete. Escape = cancel.
+  </div>
+  <div class="add-chord-area" id="addChordArea">
+    <span class="add-chord-label">New chord:</span>
+    <input type="text" id="newChordInput" placeholder="Am" autocomplete="off">
+    <span class="add-chord-label" id="addChordHint">Type a chord, then click a letter to place it</span>
+  </div>
+  <div class="save-notice" id="saveNotice"></div>
+</div>
+
+<div class="catalog" id="catalog"></div>
+<div id="songDisplay"></div>
+
+<script src="chord_songs.js"></script>
+<script>
+(function() {
+  const NOTES_SHARP = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+  const NOTES_FLAT  = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+  const NOTE_TO_INDEX = {};
+  NOTES_SHARP.forEach((n, i) => NOTE_TO_INDEX[n] = i);
+  NOTES_FLAT.forEach((n, i) => NOTE_TO_INDEX[n] = i);
+
+  const CHORD_RE = /\[([A-G][#b]?)((?:m|maj|min|dim|aug|sus[24]?|add\d+|\d+)*)(\/([A-G][#b]?))?\]/g;
+
+  const input = document.getElementById('songInput');
+  const suggestionsEl = document.getElementById('suggestions');
+  const songDisplay = document.getElementById('songDisplay');
+  const keyDisplay = document.getElementById('keyDisplay');
+  const fontSizeLabel = document.getElementById('fontSizeLabel');
+  const editBtn = document.getElementById('editBtn');
+  const undoBtn = document.getElementById('undoBtn');
+  const saveBtn = document.getElementById('saveBtn');
+  const saveNotice = document.getElementById('saveNotice');
+  const editHelp = document.getElementById('editHelp');
+  const addChordArea = document.getElementById('addChordArea');
+  const newChordInput = document.getElementById('newChordInput');
+  const addChordHint = document.getElementById('addChordHint');
+
+  let currentSong = null;
+  let currentSongIdx = -1;
+  let transposeAmount = 0;
+  let fontSize = 14;
+  let highlightedIdx = -1;
+  let currentMatches = [];
+  let editMode = false;
+
+  // Edit state: selected chord being moved
+  let selectedChord = null; // { sectionIdx, lineIdx, segIdx, chordName }
+
+  // Undo stack: stores deep copies of currentSong before each edit
+  let undoStack = [];
+  const MAX_UNDO = 50;
+
+  function pushUndo() {
+    if (!currentSong) return;
+    undoStack.push(JSON.parse(JSON.stringify(currentSong)));
+    if (undoStack.length > MAX_UNDO) undoStack.shift();
+    undoBtn.disabled = false;
+  }
+
+  function performUndo() {
+    if (undoStack.length === 0 || !currentSong) return;
+    currentSong = undoStack.pop();
+    if (currentSongIdx >= 0) CHORD_SONGS[currentSongIdx] = JSON.parse(JSON.stringify(currentSong));
+    selectedChord = null;
+    document.body.classList.remove('chord-grabbed');
+    undoBtn.disabled = undoStack.length === 0;
+    renderSong();
+  }
+
+  // --- Transpose ---
+
+  function useFlats(key) {
+    return ['F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb', 'Dm', 'Gm', 'Cm', 'Fm'].includes(key);
+  }
+
+  function transposeNote(note, semitones, flats) {
+    const idx = NOTE_TO_INDEX[note];
+    if (idx === undefined) return note;
+    const newIdx = ((idx + semitones) % 12 + 12) % 12;
+    return flats ? NOTES_FLAT[newIdx] : NOTES_SHARP[newIdx];
+  }
+
+  function transposeChordLine(line, semitones, originalKey) {
+    if (semitones === 0) return line;
+    const newKeyIdx = ((NOTE_TO_INDEX[originalKey] || 0) + semitones) % 12;
+    const newKey = NOTES_SHARP[((newKeyIdx % 12) + 12) % 12];
+    const flats = useFlats(newKey);
+    return line.replace(CHORD_RE, (match, root, quality, slashPart, bassNote) => {
+      const newRoot = transposeNote(root, semitones, flats);
+      let result = '[' + newRoot + (quality || '');
+      if (bassNote) result += '/' + transposeNote(bassNote, semitones, flats);
+      return result + ']';
+    });
+  }
+
+  function getTransposedKey() {
+    if (!currentSong) return '--';
+    const origIdx = NOTE_TO_INDEX[currentSong.key] || 0;
+    const newIdx = ((origIdx + transposeAmount) % 12 + 12) % 12;
+    return NOTES_SHARP[newIdx];
+  }
+
+  // --- ChordPro parsing ---
+
+  function parseChordProLine(line) {
+    const segments = [];
+    let lastIdx = 0;
+    const re = /\[([^\]]+)\]/g;
+    let m;
+    while ((m = re.exec(line)) !== null) {
+      if (m.index > lastIdx) {
+        if (segments.length > 0) {
+          segments[segments.length - 1].text += line.slice(lastIdx, m.index);
+        } else {
+          segments.push({ chord: '', text: line.slice(lastIdx, m.index) });
+        }
+      }
+      segments.push({ chord: m[1], text: '' });
+      lastIdx = m.index + m[0].length;
+    }
+    if (lastIdx < line.length) {
+      if (segments.length > 0) {
+        segments[segments.length - 1].text += line.slice(lastIdx);
+      } else {
+        segments.push({ chord: '', text: line.slice(lastIdx) });
+      }
+    }
+    return segments;
+  }
+
+  // --- View mode rendering ---
+
+  function renderLine(line) {
+    if (line === '') return '<div class="empty-line"></div>';
+
+    const transposed = transposeChordLine(line, transposeAmount, currentSong.key);
+    const segments = parseChordProLine(transposed);
+    const hasChords = segments.some(s => s.chord);
+
+    if (!hasChords) {
+      return `<div class="chord-line-pair"><div class="lyric-row">${escapeHtml(line)}</div></div>`;
+    }
+
+    let chordRow = '';
+    let lyricRow = '';
+    for (const seg of segments) {
+      const chordStr = seg.chord ? escapeHtml(seg.chord) : '';
+      const textStr = escapeHtml(seg.text);
+      const chordLen = chordStr.length;
+      const textLen = textStr.length;
+      const minWidth = Math.max(chordLen + (seg.chord ? 1 : 0), textLen);
+      chordRow += chordStr.padEnd(minWidth, ' ');
+      lyricRow += textStr.padEnd(minWidth, ' ');
+    }
+
+    return `<div class="chord-line-pair"><div class="chord-row">${chordRow}</div><div class="lyric-row">${lyricRow}</div></div>`;
+  }
+
+  // --- Edit mode rendering ---
+
+  // Extract plain text and chord positions from a ChordPro line
+  // Returns { plainText: "As the deer", chords: [{pos: 0, name: "C"}, {pos: 7, name: "G"}] }
+  function lineToPlain(line) {
+    const chords = [];
+    let plain = '';
+    const re = /\[([^\]]+)\]/g;
+    let lastIdx = 0;
+    let m;
+    while ((m = re.exec(line)) !== null) {
+      plain += line.slice(lastIdx, m.index);
+      chords.push({ pos: plain.length, name: m[1] });
+      lastIdx = m.index + m[0].length;
+    }
+    plain += line.slice(lastIdx);
+    return { plainText: plain, chords };
+  }
+
+  // Convert plain text + chord positions back to ChordPro line
+  function plainToLine(plainText, chords) {
+    // Sort chords by position descending so insertions don't shift indices
+    const sorted = [...chords].sort((a, b) => b.pos - a.pos);
+    let result = plainText;
+    for (const c of sorted) {
+      const pos = Math.min(c.pos, result.length);
+      result = result.slice(0, pos) + `[${c.name}]` + result.slice(pos);
+    }
+    return result;
+  }
+
+  function renderEditLine(line, sectionIdx, lineIdx) {
+    if (line === '') return '<div class="edit-empty-line"></div>';
+
+    const { plainText, chords } = lineToPlain(line);
+
+    // Build chord map: position → { name, idx }
+    const chordMap = {};
+    chords.forEach((c, ci) => { chordMap[c.pos] = { name: c.name, idx: ci }; });
+
+    let html = `<div class="edit-line" data-section="${sectionIdx}" data-line="${lineIdx}">`;
+
+    // Chord row: one cell per character position, chord names placed at their position
+    html += `<div class="edit-chord-row">`;
+    let ci = 0;
+    while (ci < plainText.length) {
+      if (chordMap[ci]) {
+        const c = chordMap[ci];
+        const isSelected = selectedChord &&
+          selectedChord.sectionIdx === sectionIdx &&
+          selectedChord.lineIdx === lineIdx &&
+          selectedChord.chordIdx === c.idx;
+        const cls = isSelected ? ' selected' : '';
+        const chordName = escapeHtml(c.name);
+        // The chord label spans its own width, then we skip that many character columns
+        html += `<span class="edit-chord-cell${cls}" data-has-chord="1" data-chordidx="${c.idx}">${chordName}</span>`;
+        // Skip character positions that the chord label covers (minus 1 for the current position)
+        const skip = Math.max(0, chordName.length - 1);
+        ci += 1 + skip;
+      } else {
+        html += `<span class="edit-space"> </span>`;
+        ci++;
+      }
+    }
+    html += `</div>`;
+
+    // Lyric row: one cell per character, each clickable
+    html += `<div class="edit-lyric-row">`;
+    for (let i = 0; i < plainText.length; i++) {
+      const ch = plainText[i];
+      html += `<span class="edit-lyric-cell" data-abspos="${i}">${escapeHtml(ch)}</span>`;
+    }
+    html += `</div>`;
+
+    html += `</div>`;
+    return html;
+  }
+
+  // --- Render ---
+
+  function renderSong() {
+    if (!currentSong) {
+      songDisplay.innerHTML = '';
+      keyDisplay.textContent = 'Key: --';
+      return;
+    }
+
+    const key = getTransposedKey();
+    const origKey = currentSong.key;
+    keyDisplay.textContent = transposeAmount === 0
+      ? `Key: ${key}`
+      : `Key: ${key} (orig ${origKey})`;
+
+    let html = '<div class="song-container">';
+    html += `<div class="song-title-display">${escapeHtml(currentSong.title)}</div>`;
+
+    for (let si = 0; si < currentSong.sections.length; si++) {
+      const section = currentSong.sections[si];
+      html += '<div class="section-block">';
+      if (section.label) {
+        html += `<div class="section-label">${escapeHtml(section.label)}</div>`;
+      }
+      for (let li = 0; li < section.lines.length; li++) {
+        if (editMode) {
+          html += renderEditLine(section.lines[li], si, li);
+        } else {
+          html += renderLine(section.lines[li]);
+        }
+      }
+      html += '</div>';
+    }
+
+    if (editMode) {
+      const isActive = selectedChord ? ' active' : '';
+      html += `<div class="delete-zone${isActive}" id="deleteZone">Click here to remove chord</div>`;
+    }
+
+    html += '</div>';
+    songDisplay.innerHTML = html;
+
+    if (!editMode) {
+      songDisplay.querySelectorAll('.chord-line-pair').forEach(el => {
+        el.style.fontSize = fontSize + 'px';
+      });
+    } else {
+      songDisplay.querySelectorAll('.edit-line').forEach(el => {
+        el.style.fontSize = fontSize + 'px';
+      });
+    }
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  // --- Edit mode: click chord to pick up, click character to place ---
+
+  songDisplay.addEventListener('click', (e) => {
+    if (!editMode || !currentSong) return;
+
+    // Click on delete zone?
+    if (e.target.id === 'deleteZone' || e.target.closest('#deleteZone')) {
+      if (selectedChord) {
+        pushUndo();
+        const section = currentSong.sections[selectedChord.sectionIdx];
+        const { plainText, chords } = lineToPlain(section.lines[selectedChord.lineIdx]);
+        chords.splice(selectedChord.chordIdx, 1);
+        section.lines[selectedChord.lineIdx] = plainToLine(plainText, chords);
+        if (currentSongIdx >= 0) CHORD_SONGS[currentSongIdx] = currentSong;
+        selectedChord = null;
+        document.body.classList.remove('chord-grabbed');
+        renderSong();
+      }
+      return;
+    }
+
+    const lineEl = e.target.closest('.edit-line');
+    if (!lineEl) return;
+    const si = parseInt(lineEl.dataset.section);
+    const li = parseInt(lineEl.dataset.line);
+
+    const chordCell = e.target.closest('.edit-chord-cell');
+    const lyricCell = e.target.closest('.edit-lyric-cell');
+
+    // Determine if we have a chord ready to place (either picked up or typed in)
+    const newChord = newChordInput.value.trim();
+    const hasNewChord = newChord.length > 0;
+
+    if (selectedChord) {
+      // MOVING an existing chord
+      if (!lyricCell && !chordCell) return;
+
+      pushUndo();
+      const chordName = selectedChord.chordName;
+
+      // Remove chord from source line
+      const srcSection = currentSong.sections[selectedChord.sectionIdx];
+      const srcParsed = lineToPlain(srcSection.lines[selectedChord.lineIdx]);
+      srcParsed.chords.splice(selectedChord.chordIdx, 1);
+      srcSection.lines[selectedChord.lineIdx] = plainToLine(srcParsed.plainText, srcParsed.chords);
+
+      // Place chord at target position
+      let targetPos = 0;
+      if (lyricCell) {
+        targetPos = parseInt(lyricCell.dataset.abspos);
+      } else if (chordCell) {
+        const dstParsed = lineToPlain(currentSong.sections[si].lines[li]);
+        const existingIdx = parseInt(chordCell.dataset.chordidx);
+        if (existingIdx < dstParsed.chords.length) {
+          targetPos = dstParsed.chords[existingIdx].pos;
+        }
+      }
+
+      const dstSection = currentSong.sections[si];
+      const dstParsed = lineToPlain(dstSection.lines[li]);
+      dstParsed.chords.push({ pos: targetPos, name: chordName });
+      dstSection.lines[li] = plainToLine(dstParsed.plainText, dstParsed.chords);
+
+      if (currentSongIdx >= 0) CHORD_SONGS[currentSongIdx] = currentSong;
+      selectedChord = null;
+      document.body.classList.remove('chord-grabbed');
+      saveBtn.disabled = false;
+      renderSong();
+
+    } else if (hasNewChord && lyricCell) {
+      // INSERTING a new chord from the input
+      pushUndo();
+
+      let targetPos = parseInt(lyricCell.dataset.abspos);
+      const dstSection = currentSong.sections[si];
+      const dstParsed = lineToPlain(dstSection.lines[li]);
+      dstParsed.chords.push({ pos: targetPos, name: newChord });
+      dstSection.lines[li] = plainToLine(dstParsed.plainText, dstParsed.chords);
+
+      if (currentSongIdx >= 0) CHORD_SONGS[currentSongIdx] = currentSong;
+      saveBtn.disabled = false;
+      // Keep the input value so you can quickly place the same chord multiple times
+      renderSong();
+
+    } else {
+      // PICKING UP an existing chord
+      if (chordCell && chordCell.dataset.hasChord === '1') {
+        const chordIdx = parseInt(chordCell.dataset.chordidx);
+        const section = currentSong.sections[si];
+        const { chords } = lineToPlain(section.lines[li]);
+        if (chordIdx < chords.length) {
+          // Clear the new chord input when picking up an existing chord
+          newChordInput.value = '';
+          updateNewChordState();
+          selectedChord = {
+            sectionIdx: si,
+            lineIdx: li,
+            chordIdx: chordIdx,
+            chordName: chords[chordIdx].name
+          };
+          document.body.classList.add('chord-grabbed');
+          renderSong();
+        }
+      }
+    }
+  });
+
+  // New chord input: update visual state when typing
+  function updateNewChordState() {
+    const val = newChordInput.value.trim();
+    if (val) {
+      newChordInput.classList.add('ready');
+      addChordHint.textContent = `Click a letter to place "${val}"`;
+      document.body.classList.add('chord-grabbed');
+      // Cancel any picked-up chord when typing a new one
+      if (selectedChord) {
+        selectedChord = null;
+        renderSong();
+      }
+    } else {
+      newChordInput.classList.remove('ready');
+      addChordHint.textContent = 'Type a chord, then click a letter to place it';
+      if (!selectedChord) {
+        document.body.classList.remove('chord-grabbed');
+      }
+    }
+  }
+
+  newChordInput.addEventListener('input', updateNewChordState);
+
+  // Cancel selection on Escape, Undo on Ctrl+Z
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (selectedChord) {
+        selectedChord = null;
+        document.body.classList.remove('chord-grabbed');
+        renderSong();
+      }
+      if (newChordInput.value) {
+        newChordInput.value = '';
+        updateNewChordState();
+      }
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'z' && editMode) {
+      e.preventDefault();
+      performUndo();
+    }
+  });
+
+  undoBtn.addEventListener('click', () => {
+    if (editMode) performUndo();
+  });
+
+  // --- Search / Autocomplete ---
+
+  function normalize(str) {
+    return str.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+  }
+
+  function findMatches(query) {
+    if (!query.trim()) return [];
+    const q = normalize(query);
+    const words = q.split(/\s+/);
+    return CHORD_SONGS.map((song, idx) => ({ song, idx })).filter(({ song }) => {
+      const t = normalize(song.title);
+      return words.every(w => t.includes(w));
+    });
+  }
+
+  function showSuggestions(matches) {
+    currentMatches = matches;
+    highlightedIdx = -1;
+    if (matches.length === 0) {
+      suggestionsEl.classList.remove('active');
+      return;
+    }
+    suggestionsEl.innerHTML = matches.map((m, i) =>
+      `<div class="suggestion-item" data-idx="${i}">${escapeHtml(m.song.title)}</div>`
+    ).join('');
+    suggestionsEl.classList.add('active');
+  }
+
+  function hideSuggestions() {
+    suggestionsEl.classList.remove('active');
+    currentMatches = [];
+    highlightedIdx = -1;
+  }
+
+  function selectSong(match) {
+    currentSong = JSON.parse(JSON.stringify(match.song)); // deep copy so edits don't corrupt source until save
+    currentSongIdx = match.idx;
+    transposeAmount = 0;
+    editMode = false;
+    selectedChord = null;
+    undoStack = [];
+    undoBtn.disabled = true;
+    newChordInput.value = '';
+    document.body.classList.remove('chord-grabbed');
+    editBtn.textContent = 'Edit';
+    editBtn.classList.remove('active');
+    editHelp.classList.remove('active');
+    addChordArea.classList.remove('active');
+    input.value = match.song.title;
+    hideSuggestions();
+    document.getElementById('catalog').style.display = 'none';
+    renderSong();
+  }
+
+  input.addEventListener('input', () => showSuggestions(findMatches(input.value)));
+
+  input.addEventListener('keydown', (e) => {
+    if (!suggestionsEl.classList.contains('active')) {
+      if (e.key === 'Enter') {
+        const matches = findMatches(input.value);
+        if (matches.length === 1) selectSong(matches[0]);
+      }
+      return;
+    }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      highlightedIdx = Math.min(highlightedIdx + 1, currentMatches.length - 1);
+      updateHighlight();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      highlightedIdx = Math.max(highlightedIdx - 1, 0);
+      updateHighlight();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (highlightedIdx >= 0) selectSong(currentMatches[highlightedIdx]);
+      else if (currentMatches.length === 1) selectSong(currentMatches[0]);
+    } else if (e.key === 'Escape') {
+      hideSuggestions();
+    }
+  });
+
+  function updateHighlight() {
+    const items = suggestionsEl.querySelectorAll('.suggestion-item');
+    items.forEach((el, i) => el.classList.toggle('highlighted', i === highlightedIdx));
+    if (highlightedIdx >= 0 && items[highlightedIdx]) {
+      items[highlightedIdx].scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  suggestionsEl.addEventListener('click', (e) => {
+    const item = e.target.closest('.suggestion-item');
+    if (item) selectSong(currentMatches[parseInt(item.dataset.idx)]);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-area')) hideSuggestions();
+  });
+
+  // --- Song Catalog ---
+
+  const catalogEl = document.getElementById('catalog');
+  const catalogBtn = document.getElementById('catalogBtn');
+
+  function renderCatalog() {
+    const sorted = CHORD_SONGS.map((song, idx) => ({ song, idx }))
+      .sort((a, b) => a.song.title.toLowerCase().localeCompare(b.song.title.toLowerCase()));
+
+    let html = '<div class="catalog-header">';
+    html += '<h2>All Songs</h2>';
+    html += `<span class="catalog-count">${sorted.length} songs</span>`;
+    html += '</div>';
+    html += '<div class="catalog-list">';
+
+    let currentLetter = '';
+    for (const { song, idx } of sorted) {
+      const letter = song.title.charAt(0).toUpperCase();
+      if (letter !== currentLetter) {
+        currentLetter = letter;
+        html += `<div class="catalog-letter">${escapeHtml(letter)}</div>`;
+      }
+      html += `<div class="catalog-item" data-idx="${idx}">${escapeHtml(song.title)}</div>`;
+    }
+
+    html += '</div>';
+    catalogEl.innerHTML = html;
+    catalogEl.style.display = '';
+    songDisplay.innerHTML = '';
+  }
+
+  catalogEl.addEventListener('click', (e) => {
+    const item = e.target.closest('.catalog-item');
+    if (item) {
+      const idx = parseInt(item.dataset.idx);
+      selectSong({ song: CHORD_SONGS[idx], idx });
+      catalogEl.style.display = 'none';
+    }
+  });
+
+  catalogBtn.addEventListener('click', () => {
+    currentSong = null;
+    currentSongIdx = -1;
+    editMode = false;
+    selectedChord = null;
+    undoStack = [];
+    undoBtn.disabled = true;
+    newChordInput.value = '';
+    document.body.classList.remove('chord-grabbed');
+    editBtn.textContent = 'Edit';
+    editBtn.classList.remove('active');
+    editHelp.classList.remove('active');
+    addChordArea.classList.remove('active');
+    input.value = '';
+    keyDisplay.textContent = 'Key: --';
+    hideSuggestions();
+    renderCatalog();
+  });
+
+  // Show catalog on page load
+  renderCatalog();
+
+  // --- Transpose ---
+
+  document.getElementById('transposeUp').addEventListener('click', () => {
+    transposeAmount = ((transposeAmount + 1) % 12 + 12) % 12;
+    renderSong();
+  });
+
+  document.getElementById('transposeDown').addEventListener('click', () => {
+    transposeAmount = ((transposeAmount - 1) % 12 + 12) % 12;
+    renderSong();
+  });
+
+  // --- Font size ---
+
+  function updateFontSize(newSize) {
+    fontSize = Math.max(10, Math.min(24, newSize));
+    fontSizeLabel.textContent = fontSize + 'px';
+    songDisplay.querySelectorAll('.chord-line-pair, .edit-line').forEach(el => {
+      el.style.fontSize = fontSize + 'px';
+    });
+  }
+
+  document.getElementById('fontUp').addEventListener('click', () => updateFontSize(fontSize + 1));
+  document.getElementById('fontDown').addEventListener('click', () => updateFontSize(fontSize - 1));
+
+  // --- Edit mode toggle ---
+
+  editBtn.addEventListener('click', () => {
+    if (!currentSong) return;
+    editMode = !editMode;
+    selectedChord = null;
+    newChordInput.value = '';
+    document.body.classList.remove('chord-grabbed');
+
+    if (editMode) {
+      editBtn.textContent = 'Done';
+      editBtn.classList.add('active');
+      editHelp.classList.add('active');
+      addChordArea.classList.add('active');
+    } else {
+      editBtn.textContent = 'Edit';
+      editBtn.classList.remove('active');
+      editHelp.classList.remove('active');
+      addChordArea.classList.remove('active');
+      // Persist edits to CHORD_SONGS
+      if (currentSongIdx >= 0) {
+        CHORD_SONGS[currentSongIdx] = JSON.parse(JSON.stringify(currentSong));
+      }
+    }
+    renderSong();
+  });
+
+  // --- Download ---
+
+  saveBtn.addEventListener('click', () => {
+    // Make sure current edits are persisted
+    if (currentSong && currentSongIdx >= 0) {
+      CHORD_SONGS[currentSongIdx] = JSON.parse(JSON.stringify(currentSong));
+    }
+
+    const timestamp = new Date().toISOString();
+    const jsContent = `// Auto-generated by build_chords.py \u2014 do not edit manually\n// Generated: ${timestamp}\nconst CHORD_SONGS = ${JSON.stringify(CHORD_SONGS, null, 2)};\n`;
+
+    const blob = new Blob([jsContent], { type: 'application/javascript' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'chord_songs.js';
+    a.click();
+    URL.revokeObjectURL(url);
+    saveNotice.textContent = 'Downloaded chord_songs.js \u2014 move it to the Song-Printer folder to replace the old one.';
+    saveNotice.style.color = '#16a34a';
+    saveNotice.classList.add('active');
+  });
+
+  // --- Print ---
+
+  document.getElementById('printBtn').addEventListener('click', () => {
+    if (editMode) editBtn.click();
+    if (currentSong) window.print();
+  });
+
+  // --- Keyboard shortcuts ---
+  document.addEventListener('keydown', (e) => {
+    if (e.target === input || e.target === newChordInput || e.target.tagName === 'TEXTAREA') return;
+    if (selectedChord) return; // don't transpose while moving a chord
+    if (e.key === 'ArrowUp' || e.key === '+') {
+      e.preventDefault();
+      transposeAmount = ((transposeAmount + 1) % 12 + 12) % 12;
+      renderSong();
+    } else if (e.key === 'ArrowDown' || e.key === '-') {
+      e.preventDefault();
+      transposeAmount = ((transposeAmount - 1) % 12 + 12) % 12;
+      renderSong();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
