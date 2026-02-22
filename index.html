@@ -358,9 +358,23 @@
       overflow: hidden;
     }
 
-    .print-page.half-page-format .song-columns {
-      column-count: 2;
-      column-gap: 0.5in;
+    .half-wrapper {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+
+    .half-side {
+      width: 50%;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .half-side .song-columns {
+      flex: 1;
+      min-height: 0;
     }
 
     .half-page-divider {
@@ -368,7 +382,7 @@
       top: 0;
       left: 50%;
       height: 100%;
-      border-left: 1px dashed #ccc;
+      border-left: 1px dashed #aaa;
       pointer-events: none;
     }
 
@@ -460,7 +474,8 @@
       }
 
       .half-page-divider {
-        display: none;
+        display: block;
+        border-left: 1px dashed #999;
       }
 
       .print-page.half-page-format {
@@ -469,9 +484,29 @@
         padding: 0.5in;
       }
 
-      .print-page.half-page-format .song-columns {
+      .half-wrapper {
+        flex: 1;
+        min-height: 0;
+        height: auto !important;
+      }
+
+      .half-side {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .half-side .page-header {
+        flex-shrink: 0;
+      }
+
+      .half-side .song-columns {
+        flex: 1;
+        min-height: 0;
+        height: auto !important;
         column-count: 2;
-        column-gap: 1in;
+        column-gap: 0.15in;
+        column-fill: auto;
       }
 
       /* margin: 0 removes browser headers/footers (URL, date, page numbers) */
@@ -492,12 +527,21 @@
     <input type="text" id="pageTitle" placeholder="e.g. Sunday, February 9 2026" style="width:100%;padding:10px 12px;font-size:14px;font-family:Arial,sans-serif;border:2px solid #ddd;border-radius:6px;outline:none;">
   </div>
 
-  <div style="margin-bottom: 12px;">
-    <label for="formatSelect" style="font-size:13px;font-weight:bold;margin-right:8px;">Print Format:</label>
-    <select id="formatSelect" style="padding:8px 12px;font-size:14px;font-family:Arial,sans-serif;border:2px solid #ddd;border-radius:6px;outline:none;">
-      <option value="standard">3-Column (Standard)</option>
-      <option value="half">2-Column (Cut-in-Half)</option>
-    </select>
+  <div style="margin-bottom: 12px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+    <div>
+      <label for="formatSelect" style="font-size:13px;font-weight:bold;margin-right:8px;">Print Format:</label>
+      <select id="formatSelect" style="padding:8px 12px;font-size:14px;font-family:Arial,sans-serif;border:2px solid #ddd;border-radius:6px;outline:none;">
+        <option value="standard">3-Column (Standard)</option>
+        <option value="half">4-Column (Cut-in-Half)</option>
+      </select>
+    </div>
+    <div style="display:flex; align-items:center; gap:6px;">
+      <label style="font-size:13px;font-weight:bold;">Font Size:</label>
+      <button id="fontSizeDec" class="btn btn-secondary" style="padding:3px 11px;font-size:16px;line-height:1;">−</button>
+      <span id="fontSizeDisplay" style="font-size:13px;min-width:60px;text-align:center;color:#555;">Auto</span>
+      <button id="fontSizeInc" class="btn btn-secondary" style="padding:3px 11px;font-size:16px;line-height:1;">+</button>
+      <button id="fontSizeReset" class="btn btn-secondary" style="padding:4px 10px;font-size:12px;">Auto</button>
+    </div>
   </div>
 
   <div class="selected-songs" id="selectedSongs"></div>
@@ -555,6 +599,44 @@
   const saveBtn = document.getElementById('saveBtn');
   const saveNotice = document.getElementById('saveNotice');
   const editHint = document.getElementById('editHint');
+
+  // Font size control
+  let manualFontSize = null;   // null = auto, number = user override
+  let lastFontSize = null;     // last size used (auto or manual)
+  const fontSizeDisplay = document.getElementById('fontSizeDisplay');
+
+  function updateFontSizeDisplay() {
+    if (manualFontSize !== null) {
+      fontSizeDisplay.textContent = manualFontSize + 'pt';
+      fontSizeDisplay.style.color = '#1a56db';
+    } else if (lastFontSize !== null) {
+      fontSizeDisplay.textContent = lastFontSize + 'pt (auto)';
+      fontSizeDisplay.style.color = '#555';
+    } else {
+      fontSizeDisplay.textContent = 'Auto';
+      fontSizeDisplay.style.color = '#555';
+    }
+  }
+
+  document.getElementById('fontSizeDec').addEventListener('click', () => {
+    const base = manualFontSize !== null ? manualFontSize : (lastFontSize || 10);
+    manualFontSize = Math.max(6, parseFloat((base - 0.5).toFixed(1)));
+    updateFontSizeDisplay();
+    generateLayout();
+  });
+
+  document.getElementById('fontSizeInc').addEventListener('click', () => {
+    const base = manualFontSize !== null ? manualFontSize : (lastFontSize || 10);
+    manualFontSize = Math.min(18, parseFloat((base + 0.5).toFixed(1)));
+    updateFontSizeDisplay();
+    generateLayout();
+  });
+
+  document.getElementById('fontSizeReset').addEventListener('click', () => {
+    manualFontSize = null;
+    updateFontSizeDisplay();
+    generateLayout();
+  });
 
   // --- Search / Autocomplete ---
 
@@ -826,26 +908,39 @@
   // --- Standard 3-column layout ---
 
   function generateStandardLayout() {
-    const sizes = [11, 10.5, 10, 9.5, 9];
-    let bestSize = 9;
-    let fitsOnOnePage = false;
+    let bestSize, fitsOnOnePage;
 
-    for (const size of sizes) {
-      const page = createPage(selectedSongs, size, true, false);
+    if (manualFontSize !== null) {
+      bestSize = manualFontSize;
+      const page = createPage(selectedSongs, bestSize, true, false);
       previewContainer.innerHTML = '';
       previewContainer.appendChild(page);
+      fitsOnOnePage = contentFits(page);
+    } else {
+      const sizes = [11, 10.5, 10, 9.5, 9];
+      bestSize = 9;
+      fitsOnOnePage = false;
 
-      if (contentFits(page)) {
-        bestSize = size;
-        fitsOnOnePage = true;
-        break;
+      for (const size of sizes) {
+        const page = createPage(selectedSongs, size, true, false);
+        previewContainer.innerHTML = '';
+        previewContainer.appendChild(page);
+
+        if (contentFits(page)) {
+          bestSize = size;
+          fitsOnOnePage = true;
+          break;
+        }
       }
     }
+
+    lastFontSize = bestSize;
+    updateFontSizeDisplay();
 
     if (fitsOnOnePage) {
       fontInfo.textContent = `Font size: ${bestSize}pt — fits on 1 page`;
     } else {
-      splitIntoPages(selectedSongs, 9);
+      splitIntoPages(selectedSongs, bestSize);
     }
   }
 
@@ -880,24 +975,35 @@
   // If songs overflow one side, use front+back (double-sided) printing.
 
   function generateHalfPageLayout() {
-    const sizes = [14, 13.5, 13, 12.5, 12, 11.5, 11, 10.5, 10, 9.5, 9, 8.5, 8, 7.5, 7];
-    let bestSize = 7;
-    let bestPages = null;
+    let bestSize, bestPages;
 
-    // Find the largest font where all songs fit on at most 2 pages
-    for (const size of sizes) {
-      const pages = paginateHalfPage(selectedSongs, size);
-      if (pages && pages.length <= 2) {
-        bestSize = size;
-        bestPages = pages;
-        break;
+    if (manualFontSize !== null) {
+      bestSize = manualFontSize;
+      bestPages = paginateHalfPage(selectedSongs, bestSize);
+      if (!bestPages) bestPages = [[...selectedSongs]]; // fallback: one page with all songs
+    } else {
+      const sizes = [14, 13.5, 13, 12.5, 12, 11.5, 11, 10.5, 10, 9.5, 9, 8.5, 8, 7.5, 7];
+      bestSize = 7;
+      bestPages = null;
+
+      // Find the largest font where all songs fit on at most 2 pages
+      for (const size of sizes) {
+        const pages = paginateHalfPage(selectedSongs, size);
+        if (pages && pages.length <= 2) {
+          bestSize = size;
+          bestPages = pages;
+          break;
+        }
+      }
+
+      // If nothing fits in 2 pages even at 7pt, just use 7pt with however many pages needed
+      if (!bestPages) {
+        bestPages = paginateHalfPage(selectedSongs, bestSize);
       }
     }
 
-    // If nothing fits in 2 pages even at 7pt, just use 7pt with however many pages needed
-    if (!bestPages) {
-      bestPages = paginateHalfPage(selectedSongs, bestSize);
-    }
+    lastFontSize = bestSize;
+    updateFontSizeDisplay();
 
     previewContainer.innerHTML = '';
 
@@ -965,12 +1071,12 @@
 
     // Two identical halves side by side, each with 2-column layout
     const wrapper = document.createElement('div');
-    wrapper.style.cssText = 'display:flex; width:100%; height:100%;';
+    wrapper.className = 'half-wrapper';
 
     for (let side = 0; side < 2; side++) {
       const half = document.createElement('div');
-      half.style.cssText = 'width:50%; height:100%; overflow:hidden;' +
-        (side === 0 ? 'padding-right:0.15in;' : 'padding-left:0.15in;');
+      half.className = 'half-side';
+      half.style.cssText = side === 0 ? 'padding-right:0.15in;' : 'padding-left:0.15in;';
 
       if (showHeader) {
         const title = getPageTitle();
@@ -986,7 +1092,7 @@
       // 2-column layout within each half
       const cols = document.createElement('div');
       cols.className = 'song-columns';
-      cols.style.cssText = 'column-count:2; column-gap:0.15in; column-fill:auto; overflow:hidden;';
+      cols.style.cssText = 'column-count:2; column-gap:0.15in; column-fill:auto;';
       cols.innerHTML = songs.map(s => buildSongHTML(s, fontSize)).join('');
       half.appendChild(cols);
       wrapper.appendChild(half);
@@ -994,7 +1100,7 @@
 
     page.appendChild(wrapper);
 
-    // Measure header and set explicit column heights (multi-column needs fixed height)
+    // Measure header and set explicit column heights for screen preview (multi-column needs fixed height)
     document.body.appendChild(page);
     wrapper.querySelectorAll('.song-columns').forEach(cols => {
       const half = cols.parentElement;
