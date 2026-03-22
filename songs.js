@@ -4747,6 +4747,123 @@ const SONGS = [
     ]
   },
   {
+    "title": "Make My Life a Prayer to You",
+    "lines": [
+      {
+        "indent": 0,
+        "text": "Make my life a prayer to you"
+      },
+      {
+        "indent": 0,
+        "text": "I want to do what you want me to"
+      },
+      {
+        "indent": 0,
+        "text": "No empty words and no white lies"
+      },
+      {
+        "indent": 0,
+        "text": "No token prayers no compromise"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "I want to shine the light you gave"
+      },
+      {
+        "indent": 0,
+        "text": "Through your son you sent to save us"
+      },
+      {
+        "indent": 0,
+        "text": "From ourselves and our despair"
+      },
+      {
+        "indent": 0,
+        "text": "It comforts me to know you're really there"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "Well I want to thank you know"
+      },
+      {
+        "indent": 1,
+        "text": "For being patient with me"
+      },
+      {
+        "indent": 1,
+        "text": "Oh it's so hard to see"
+      },
+      {
+        "indent": 1,
+        "text": "When my eyes are on me"
+      },
+      {
+        "indent": 1,
+        "text": "I guess I'll have to trust"
+      },
+      {
+        "indent": 1,
+        "text": "And just believe what you say"
+      },
+      {
+        "indent": 1,
+        "text": "Oh you're coming again"
+      },
+      {
+        "indent": 1,
+        "text": "Coming to take me away"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "I want to die and let you give"
+      },
+      {
+        "indent": 0,
+        "text": "Your life to me so I might live"
+      },
+      {
+        "indent": 0,
+        "text": "And share the hope you gave me"
+      },
+      {
+        "indent": 0,
+        "text": "The love that set me free"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "I want to tell the world out there"
+      },
+      {
+        "indent": 0,
+        "text": "You're not some fable or fairy tale"
+      },
+      {
+        "indent": 0,
+        "text": "That I've made up inside my head"
+      },
+      {
+        "indent": 0,
+        "text": "You're God the son and you've risen from the dead"
+      }
+    ]
+  },
+  {
     "title": "Mercy",
     "lines": [
       {
