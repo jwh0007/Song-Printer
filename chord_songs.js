@@ -1109,5 +1109,30 @@ const CHORD_SONGS = [
         ]
       }
     ]
+  },
+  {
+    "title": "Goodness of God",
+    "key": "C",
+    "sections": [
+      {
+        "type": "verse",
+        "label": "Verse 1",
+        "lines": [
+          "[C]I love You, Lord",
+          "For Your [Am]mercy never fails me",
+          "[F]All my days, [C]I've been held in Your [G]hands"
+        ]
+      },
+      {
+        "type": "chorus",
+        "label": "Chorus",
+        "lines": [
+          "[C]All my life You have been [G]faithful",
+          "[Am]All my life You have been [F]so so good",
+          "With [C]every breath that I am [G]able",
+          "I will [Am]sing of the [F]goodness of [C]God"
+        ]
+      }
+    ]
   }
 ];
