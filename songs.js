@@ -1140,19 +1140,19 @@ const SONGS = [
         "text": ""
       },
       {
-        "indent": 0,
+        "indent": 1,
         "text": "Behold He comes, riding on the clouds"
       },
       {
-        "indent": 0,
+        "indent": 1,
         "text": "Shining like the sun, at the trumpet's call"
       },
       {
-        "indent": 0,
-        "text": "Lift your voice, (it's) the year of Jubilee"
+        "indent": 1,
+        "text": "Lift your voice, it's the year of Jubilee"
       },
       {
-        "indent": 0,
+        "indent": 1,
         "text": "Out of Zion's hill, salvation comes"
       },
       {
@@ -1200,7 +1200,7 @@ const SONGS = [
         "text": ""
       },
       {
-        "indent": 2,
+        "indent": 1,
         "text": "There's no God like Jehovah! x4"
       },
       {
@@ -1208,7 +1208,7 @@ const SONGS = [
         "text": ""
       },
       {
-        "indent": 2,
+        "indent": 1,
         "text": "Who was, and who is, And who is to come! x4"
       }
     ]
