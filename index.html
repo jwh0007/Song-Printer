@@ -370,6 +370,15 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      box-sizing: border-box;
+    }
+
+    .half-side:first-child {
+      padding-right: 0.2in;
+    }
+
+    .half-side:last-child {
+      padding-left: 0.2in;
     }
 
     .half-side .song-columns {
@@ -481,7 +490,7 @@
       .print-page.half-page-format {
         width: 11in;
         height: 8.5in;
-        padding: 0.5in;
+        padding: 0.2in;
       }
 
       .half-wrapper {
@@ -494,6 +503,15 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
+        box-sizing: border-box;
+      }
+
+      .half-side:first-child {
+        padding-right: 0.2in;
+      }
+
+      .half-side:last-child {
+        padding-left: 0.2in;
       }
 
       .half-side .page-header {
