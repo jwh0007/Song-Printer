@@ -7164,6 +7164,63 @@ const SONGS = [
     "lines": []
   },
   {
+    "title": "Worthy Of It All",
+    "lines": [
+      {
+        "indent": 0,
+        "text": "All the saints and angels"
+      },
+      {
+        "indent": 0,
+        "text": "They bow before Your throne"
+      },
+      {
+        "indent": 0,
+        "text": "And all the elders cast their crowns"
+      },
+      {
+        "indent": 0,
+        "text": "Before the Lamb of God and sing"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "You're worthy of it all"
+      },
+      {
+        "indent": 1,
+        "text": "You're worthy of it all"
+      },
+      {
+        "indent": 1,
+        "text": "For from You are all things"
+      },
+      {
+        "indent": 1,
+        "text": "And to You are all things"
+      },
+      {
+        "indent": 1,
+        "text": "You deserve the glory"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "Day and night, night and day, let incense arise"
+      },
+      {
+        "indent": 1,
+        "text": "Day and night, night and day, let incense arise"
+      }
+    ]
+  },
+  {
     "title": "Worthy You are Worthy",
     "lines": [
       {
