@@ -1372,5 +1372,237 @@ const CHORD_SONGS = [
         ]
       }
     ]
+  },
+  {
+    "title": "Shout to the North",
+    "key": "G",
+    "sections": [
+      {
+        "type": "verse",
+        "label": "Verse 1",
+        "lines": [
+          "[G]Men of faith rise [D]up and [C]sing",
+          "[G]Of the great and [D]glorious [C]King",
+          "[G]Your are strong when we [C]feel [D]weak",
+          "In your [C]brokenness com[D]plete"
+        ]
+      },
+      {
+        "type": "chorus",
+        "label": "Chorus",
+        "lines": [
+          "[G]Shout to the [C]north and the [D]south",
+          "[G]Sing to the [C]east and [D]west",
+          "[G]Jesus is [C]savior to [D]all",
+          "[G]Lord of [C]heaven and [D]earth [G]"
+        ]
+      },
+      {
+        "type": "verse",
+        "label": "Verse 2",
+        "lines": [
+          "[G]Rise up women of the [D]truth",
+          "[G]Stand and sing to [D]broken [C]hearts",
+          "[G]Who can know the [C]healing [D]power",
+          "Of our [C]awesome [D]King of [G]love"
+        ]
+      },
+      {
+        "type": "bridge",
+        "label": "Bridge",
+        "lines": [
+          "[Em]We've been through [C]fire [C/D]",
+          "[Em]We've been through [C]rain [C/D]",
+          "[Em]We've been re[C]fined by the",
+          "Power of His [G]name",
+          "We've fallen [C]deeper in love with [D]You",
+          "You've burned this [C]truth on our [D]lips"
+        ]
+      },
+      {
+        "type": "verse",
+        "label": "Verse 3",
+        "lines": [
+          "[G]Rise up church with [D]broken [C]wings",
+          "[G]Fill this place with [D]songs a[C]gain",
+          "[G]Of our God who [C]reigns on [D]high",
+          "By His [C]grace again we'll [G]fly"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "O Praise the Name (Anastasis)",
+    "key": "G",
+    "capo": 2,
+    "sections": [
+      {
+        "type": "intro",
+        "label": "Intro",
+        "lines": [
+          "[G] [G/B] [C]"
+        ]
+      },
+      {
+        "type": "verse",
+        "label": "Verse 1",
+        "lines": [
+          "O praise the [G]name",
+          "I cast my mind to Cal[G]vary",
+          "Where Jesus bled and died for [Em]me",
+          "I see His wounds, His hands, His feet [G/B]",
+          "My [C]Saviour [D]on that cursed tree [G/B] [C]"
+        ]
+      },
+      {
+        "type": "verse",
+        "label": "Verse 2",
+        "lines": [
+          "[G]His body bound and drenched in tears",
+          "They laid Him [Em]down in Joseph's tomb",
+          "The entrance sealed by heavy stone [G/B]",
+          "[C]Messiah [D]still and all alone [G/B] [C]"
+        ]
+      },
+      {
+        "type": "chorus",
+        "label": "Chorus",
+        "lines": [
+          "[C] [G]O praise the name of the Lord our God",
+          "[Em] [D]O praise His name forever more",
+          "[C] [G/B]For endless days we will sing Your praise [Em]",
+          "[D]Oh Lord, oh Lord our God [G]"
+        ]
+      },
+      {
+        "type": "verse",
+        "label": "Verse 3",
+        "lines": [
+          "[G]And then on the third at break of dawn,",
+          "The Son of [Em]heaven rose again.",
+          "O trampled death where is your sting? [G/B]",
+          "The [C]angels [D]roar for Christ the King [G]"
+        ]
+      },
+      {
+        "type": "chorus",
+        "label": "Chorus",
+        "lines": [
+          "[C] [G]O praise the name of the Lord our God",
+          "[Em] [D]O praise His name forever more",
+          "[C] [G/B]For endless days we will sing Your praise",
+          "Oh Lord, oh Lord our God"
+        ]
+      },
+      {
+        "type": "verse",
+        "label": "Verse 4",
+        "lines": [
+          "[G]He shall return in robes of white,",
+          "The blazing [Em]Son shall pierce the night.",
+          "And I will rise among the saints [G/B]",
+          "My [C]gaze transfixed on [D]Jesus' face [G]"
+        ]
+      },
+      {
+        "type": "chorus",
+        "label": "Chorus (Outro)",
+        "lines": [
+          "[C] [G]O praise the name of the Lord our God",
+          "[Em] [D]O praise His name forever more",
+          "[C] [G/B]For endless days we will sing Your praise",
+          "Oh Lord, oh Lord our God",
+          "Oh Lord, oh Lord our God",
+          "Oh Lord, oh Lord our God"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Hungry (Falling On My Knees)",
+    "key": "C",
+    "capo": 2,
+    "sections": [
+      {
+        "type": "verse",
+        "label": "Verse 1",
+        "lines": [
+          "[C]Hungry I come to [Am]You",
+          "For I know You [G]satis[F]fy",
+          "[C]I am empty but I know",
+          "Your love does [G]not run [F]dry",
+          "So I [G]wait for [F]You",
+          "So I [G]wait for [F]You"
+        ]
+      },
+      {
+        "type": "chorus",
+        "label": "Chorus",
+        "lines": [
+          "[C]I've fallen on my [F]knees",
+          "[C]Offering all my [F]needs",
+          "[C]Jesus You're [F]all",
+          "This heart is [C]living for"
+        ]
+      },
+      {
+        "type": "verse",
+        "label": "Verse 2",
+        "lines": [
+          "[C]Broken I run to [Am]You",
+          "For your [G]arms are open [F]wide",
+          "[C]I am weary but I know your [Am]touch",
+          "Restores my [F]life",
+          "So I [G]wait for [F]You",
+          "So I [G]wait for [F]You"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Holy, Holy, Holy",
+    "key": "G",
+    "sections": [
+      {
+        "type": "verse",
+        "label": "Verse 1",
+        "lines": [
+          "[G]Holy, [Em]holy, [D]holy! [G]Lord [C]God Almighty! [G]",
+          "[D]Early in the [Em]morning our [D]song [A]shall [A7]rise [D]to [D7]Thee;",
+          "[G]Holy, [Em]holy, [D]holy! [G]Merciful [C]and mighty! [G]",
+          "[Em] [C]God in [Em]three [C]Persons, [D]blessed [G]Trinity!"
+        ]
+      },
+      {
+        "type": "verse",
+        "label": "Verse 2",
+        "lines": [
+          "[G]Holy, [Em]holy, [D]holy! [G]All the [C]saints adore Thee, [G]",
+          "[D]Casting down their [Em]golden [D]crowns [A]around [A7]the [D]glassy [D7]sea;",
+          "[G]Cherubim [Em]and [D]seraphim [G]falling [C]down before Thee, [G]",
+          "[Em] [C]Who wert [Em]and [C]art and [D]evermore [G]shalt be."
+        ]
+      },
+      {
+        "type": "verse",
+        "label": "Verse 3",
+        "lines": [
+          "[G]Holy, [Em]holy, [D]holy! [G]Though the [C]darkness hide Thee, [G]",
+          "[D]Though the eye of [Em]sinful [D]man [A]Thy [A7]glory [D]may [D7]not see,",
+          "[G]Only [Em]Thou [D]art holy; [G]there is [C]none beside Thee, [G]",
+          "[Em] [C]Perfect [Em]in [C]pow'r, in [D]love, and [G]purity."
+        ]
+      },
+      {
+        "type": "verse",
+        "label": "Verse 4",
+        "lines": [
+          "[G]Holy, [Em]holy, [D]holy! [G]Lord [C]God Almighty! [G]",
+          "[D]All thy works shall [Em]praise Thy [D]name, [A]in [A7]earth, [D]and sky, and sea;",
+          "[G]Holy, [Em]holy, [D]holy! [G]Merciful [C]and mighty! [G]",
+          "[Em] [C]God in [Em]three [C]Persons, [D]blessed [G]Trinity! [D7]"
+        ]
+      }
+    ]
   }
 ];

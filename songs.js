@@ -2895,6 +2895,87 @@ const SONGS = [
     ]
   },
   {
+    "title": "Holy, Holy, Holy",
+    "lines": [
+      {
+        "indent": 0,
+        "text": "Holy, holy, holy! Lord God Almighty!"
+      },
+      {
+        "indent": 0,
+        "text": "Early in the morning our song shall rise to Thee;"
+      },
+      {
+        "indent": 0,
+        "text": "Holy, holy, holy! Merciful and mighty!"
+      },
+      {
+        "indent": 0,
+        "text": "God in three Persons, blessed Trinity!"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "Holy, holy, holy! All the saints adore Thee,"
+      },
+      {
+        "indent": 0,
+        "text": "Casting down their golden crowns around the glassy sea;"
+      },
+      {
+        "indent": 0,
+        "text": "Cherubim and seraphim falling down before Thee,"
+      },
+      {
+        "indent": 0,
+        "text": "Who wert and art and evermore shalt be."
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "Holy, holy, holy! Though the darkness hide Thee,"
+      },
+      {
+        "indent": 0,
+        "text": "Though the eye of sinful man Thy glory may not see,"
+      },
+      {
+        "indent": 0,
+        "text": "Only Thou art holy; there is none beside Thee,"
+      },
+      {
+        "indent": 0,
+        "text": "Perfect in pow'r, in love, and purity."
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "Holy, holy, holy! Lord God Almighty!"
+      },
+      {
+        "indent": 0,
+        "text": "All thy works shall praise Thy name, in earth, and sky, and sea;"
+      },
+      {
+        "indent": 0,
+        "text": "Holy, holy, holy! Merciful and mighty!"
+      },
+      {
+        "indent": 0,
+        "text": "God in three Persons, blessed Trinity!"
+      }
+    ]
+  },
+  {
     "title": "Hosanna",
     "lines": [
       {
@@ -6184,6 +6265,115 @@ const SONGS = [
       {
         "indent": 0,
         "text": "And I know I need You now"
+      }
+    ]
+  },
+  {
+    "title": "Shout to the North",
+    "lines": [
+      {
+        "indent": 0,
+        "text": "Men of faith rise up and sing"
+      },
+      {
+        "indent": 0,
+        "text": "Of the great and glorious King"
+      },
+      {
+        "indent": 0,
+        "text": "You are strong when we feel weak"
+      },
+      {
+        "indent": 0,
+        "text": "In your brokenness complete"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "Shout to the north and the south"
+      },
+      {
+        "indent": 1,
+        "text": "Sing to the east and west"
+      },
+      {
+        "indent": 1,
+        "text": "Jesus is savior to all"
+      },
+      {
+        "indent": 1,
+        "text": "Lord of heaven and earth"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "Rise up women of the truth"
+      },
+      {
+        "indent": 0,
+        "text": "Stand and sing to broken hearts"
+      },
+      {
+        "indent": 0,
+        "text": "Who can know the healing power"
+      },
+      {
+        "indent": 0,
+        "text": "Of our awesome King of love"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "We've been through fire"
+      },
+      {
+        "indent": 0,
+        "text": "We've been through rain"
+      },
+      {
+        "indent": 0,
+        "text": "We've been refined by the"
+      },
+      {
+        "indent": 0,
+        "text": "Power of His name"
+      },
+      {
+        "indent": 0,
+        "text": "We've fallen deeper in love with You"
+      },
+      {
+        "indent": 0,
+        "text": "You've burned this truth on our lips"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "Rise up church with broken wings"
+      },
+      {
+        "indent": 0,
+        "text": "Fill this place with songs again"
+      },
+      {
+        "indent": 0,
+        "text": "Of our God who reigns on high"
+      },
+      {
+        "indent": 0,
+        "text": "By His grace again we'll fly"
       }
     ]
   },
