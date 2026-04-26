@@ -1604,5 +1604,49 @@ const CHORD_SONGS = [
         ]
       }
     ]
+  },
+  {
+    "title": "Your Name is Holy",
+    "key": "G",
+    "sections": [
+      {
+        "type": "verse",
+        "label": "Verse 1",
+        "lines": [
+          "[G]Your name is holy, your name is [D]holy",
+          "[Em]Your name is holy, [C]Lord",
+          "[G]Your name is mighty, your name is [D]mighty",
+          "[Em]Your name is mighty, [C]Lord"
+        ]
+      },
+      {
+        "type": "chorus",
+        "label": "Chorus",
+        "lines": [
+          "[G]Holy, [D]holy, [Em]holy is the [C]Lord",
+          "[G]Holy, [D]holy, [Em]holy is the [C]Lord God Almighty"
+        ]
+      },
+      {
+        "type": "verse",
+        "label": "Verse 2",
+        "lines": [
+          "[G]Your name is Jesus, your name is [D]Jesus",
+          "[Em]Your name is Jesus, [C]Lord",
+          "[G]Your name is worthy, your name is [D]worthy",
+          "[Em]Your name is worthy, [C]Lord"
+        ]
+      },
+      {
+        "type": "bridge",
+        "label": "Bridge",
+        "lines": [
+          "[C]Who was and is and [G]is to come",
+          "[C]Who was and is and [D]is to come",
+          "[Em]Worthy is the Lamb upon the [C]throne",
+          "[G]Crown Him, crown Him, [D]Lord of all"
+        ]
+      }
+    ]
   }
 ];
