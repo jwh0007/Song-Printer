@@ -1607,44 +1607,107 @@ const CHORD_SONGS = [
   },
   {
     "title": "Your Name is Holy",
-    "key": "G",
+    "key": "Gb",
     "sections": [
+      {
+        "type": "intro",
+        "label": "Intro",
+        "lines": [
+          "[Gb] [Dbsus] [Ebm7] [Cb2]"
+        ]
+      },
       {
         "type": "verse",
         "label": "Verse 1",
         "lines": [
-          "[G]Your name is holy, your name is [D]holy",
-          "[Em]Your name is holy, [C]Lord",
-          "[G]Your name is mighty, your name is [D]mighty",
-          "[Em]Your name is mighty, [C]Lord"
-        ]
-      },
-      {
-        "type": "chorus",
-        "label": "Chorus",
-        "lines": [
-          "[G]Holy, [D]holy, [Em]holy is the [C]Lord",
-          "[G]Holy, [D]holy, [Em]holy is the [C]Lord God Almighty"
+          "[Gb(no3)]There's never been anyone like You, [Gb(no3)]God",
+          "[Dbsus]There's never been anyone like You, God",
+          "[Ebm7]No one above You, [Dbsus]no one beside You",
+          "There's never been anyone like You, [Cb2]God"
         ]
       },
       {
         "type": "verse",
         "label": "Verse 2",
         "lines": [
-          "[G]Your name is Jesus, your name is [D]Jesus",
-          "[Em]Your name is Jesus, [C]Lord",
-          "[G]Your name is worthy, your name is [D]worthy",
-          "[Em]Your name is worthy, [C]Lord"
+          "[Gb(no3)]There's never been anyone like You, [Gb(no3)]God",
+          "[Dbsus]There's never been anyone like You, God",
+          "[Ebm7]You are the highest, [Dbsus]You are the greatest",
+          "There's never been anyone like You, [Cb2]God"
+        ]
+      },
+      {
+        "type": "chorus",
+        "label": "Chorus",
+        "lines": [
+          "[Gb]Yeshua, Jehovah",
+          "[Dbsus]Hallelujah, glory in the [Ebm7]highest",
+          "Yahweh, Your name is holy, [Cb2]holy, holy",
+          "[Gb]God for us, God with us",
+          "[Dbsus]King Jesus, [Ebm7]Lord Almighty",
+          "Yahweh, Your name is holy, [Cb2]holy, holy"
+        ]
+      },
+      {
+        "type": "verse",
+        "label": "Verse 3",
+        "lines": [
+          "[Gb]We praise Your name forevermore",
+          "[Dbsus]We praise Your name forevermore",
+          "[Ebm7]All tongues and all nations, [Dbsus]let all generations",
+          "Sing praise to name of the Lord our [Cb2]God"
+        ]
+      },
+      {
+        "type": "section",
+        "label": "Interlude",
+        "lines": [
+          "[Db] [Ebm7] [Cb2] [Gb] [Db] [Ebm7] [Cb2] [Gb]"
         ]
       },
       {
         "type": "bridge",
         "label": "Bridge",
         "lines": [
-          "[C]Who was and is and [G]is to come",
-          "[C]Who was and is and [D]is to come",
-          "[Em]Worthy is the Lamb upon the [C]throne",
-          "[G]Crown Him, crown Him, [D]Lord of all"
+          "[Db]Sing praise to the [Ebm7]Great I Am",
+          "[Cb2]We join all [Gb]heaven singing",
+          "[Db]Worthy [Ebm7]is the Lamb",
+          "[Cb2]Forever and ever, [Gb]amen"
+        ]
+      },
+      {
+        "type": "bridge",
+        "label": "Bridge 2",
+        "lines": [
+          "[Db]Sing praise to the [Ebm7]Great I Am",
+          "[Cb2]We join all [Gb/Bb]heaven singing",
+          "[Db]Worthy [Ebm7]is the Lamb",
+          "[Cb2]Forever and ever, [Gb]amen"
+        ]
+      },
+      {
+        "type": "bridge",
+        "label": "Bridge 3",
+        "lines": [
+          "[Db]Sing praise to the [Ebm7]Great I Am",
+          "[Cb2]We join all [Gb/Bb]heaven singing",
+          "[Db/F]Worthy [Ebm7]is the Lamb",
+          "[Cb2]Forever and ever, amen"
+        ]
+      },
+      {
+        "type": "section",
+        "label": "Interlude",
+        "lines": [
+          "[Gb] [Dbsus] [Ebm7] [Cb2]"
+        ]
+      },
+      {
+        "type": "section",
+        "label": "Ending",
+        "lines": [
+          "[Gb]Your name, [Db]Your name is holy",
+          "[Ebm7]Your name is holy, [Cb2]holy, holy"
         ]
       }
     ]
