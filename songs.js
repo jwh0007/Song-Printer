@@ -3021,6 +3021,115 @@ const SONGS = [
     ]
   },
   {
+    "title": "How Deep The Father's Love For Us",
+    "lines": [
+      {
+        "indent": 0,
+        "text": "How deep the Father's love for us"
+      },
+      {
+        "indent": 0,
+        "text": "How vast beyond all measure"
+      },
+      {
+        "indent": 0,
+        "text": "That He should give His only Son"
+      },
+      {
+        "indent": 0,
+        "text": "To make a wretch His treasure"
+      },
+      {
+        "indent": 0,
+        "text": "How great the pain of searing loss"
+      },
+      {
+        "indent": 0,
+        "text": "The Father turns His face away"
+      },
+      {
+        "indent": 0,
+        "text": "As wounds which mar the Chosen One"
+      },
+      {
+        "indent": 0,
+        "text": "Bring many sons to glory"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "Behold the man upon a cross"
+      },
+      {
+        "indent": 0,
+        "text": "My sin upon His shoulders"
+      },
+      {
+        "indent": 0,
+        "text": "Ashamed, I hear my mocking voice"
+      },
+      {
+        "indent": 0,
+        "text": "Call out among the scoffers"
+      },
+      {
+        "indent": 0,
+        "text": "It was my sin that held Him there"
+      },
+      {
+        "indent": 0,
+        "text": "Until it was accomplished"
+      },
+      {
+        "indent": 0,
+        "text": "His dying breath has brought me life"
+      },
+      {
+        "indent": 0,
+        "text": "I know that it is finished"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "I will not boast in anything"
+      },
+      {
+        "indent": 0,
+        "text": "No gifts, no power, no wisdom"
+      },
+      {
+        "indent": 0,
+        "text": "But I will boast in Jesus Christ"
+      },
+      {
+        "indent": 0,
+        "text": "His death and resurrection"
+      },
+      {
+        "indent": 0,
+        "text": "Why should I gain from His reward?"
+      },
+      {
+        "indent": 0,
+        "text": "I cannot give an answer"
+      },
+      {
+        "indent": 0,
+        "text": "But this I know with all my heart"
+      },
+      {
+        "indent": 0,
+        "text": "His wounds have paid my ransom"
+      }
+    ]
+  },
+  {
     "title": "How Great Is Our God",
     "lines": [
       {
