@@ -298,23 +298,27 @@ const SONGS = [
     ]
   },
   {
-    "title": "Because He Lives (Amen)",
+    "title": "Because He Lives",
     "lines": [
       {
         "indent": 0,
-        "text": "I believe in the Son"
+        "text": "God sent His Son"
       },
       {
         "indent": 0,
-        "text": "I believe in the risen One"
+        "text": "They called Him Jesus"
       },
       {
         "indent": 0,
-        "text": "I believe I overcome"
+        "text": "He came to love, heal and forgive"
       },
       {
         "indent": 0,
-        "text": "By the power of His blood"
+        "text": "He lived and died to buy my pardon"
+      },
+      {
+        "indent": 0,
+        "text": "An empty grave is there to prove my Saviour lives"
       },
       {
         "indent": 0,
@@ -322,27 +326,19 @@ const SONGS = [
       },
       {
         "indent": 1,
-        "text": "Amen, amen"
+        "text": "Because He lives I can face tomorrow"
       },
       {
         "indent": 1,
-        "text": "I'm alive, I'm alive"
+        "text": "Because He lives all fear is gone"
       },
       {
         "indent": 1,
-        "text": "Because He lives"
+        "text": "Because I know He holds the future"
       },
       {
         "indent": 1,
-        "text": "Amen, amen"
-      },
-      {
-        "indent": 1,
-        "text": "Let my song join the one that never ends"
-      },
-      {
-        "indent": 1,
-        "text": "Because He lives"
+        "text": "And life is worth the living just because He lives"
       },
       {
         "indent": 0,
@@ -350,19 +346,23 @@ const SONGS = [
       },
       {
         "indent": 0,
-        "text": "I believe in the day"
+        "text": "And then one day"
       },
       {
         "indent": 0,
-        "text": "The sky will crack like a page"
+        "text": "I'll cross that river"
       },
       {
         "indent": 0,
-        "text": "He will come back again"
+        "text": "I'll fight life's final war with pain"
       },
       {
         "indent": 0,
-        "text": "Come to gather His people"
+        "text": "And then as death gives way to vict'ry"
+      },
+      {
+        "indent": 0,
+        "text": "I'll see the lights of glory and I'll know he lives"
       },
       {
         "indent": 0,
