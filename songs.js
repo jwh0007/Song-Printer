@@ -363,26 +363,6 @@ const SONGS = [
       {
         "indent": 0,
         "text": "I'll see the lights of glory and I'll know he lives"
-      },
-      {
-        "indent": 0,
-        "text": ""
-      },
-      {
-        "indent": 1,
-        "text": "Because He lives I can face tomorrow"
-      },
-      {
-        "indent": 1,
-        "text": "Because He lives all fear is gone"
-      },
-      {
-        "indent": 1,
-        "text": "Because I know He holds the future"
-      },
-      {
-        "indent": 1,
-        "text": "And life is worth the living just because He lives"
       }
     ]
   },
