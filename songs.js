@@ -298,6 +298,95 @@ const SONGS = [
     ]
   },
   {
+    "title": "Because He Lives (Amen)",
+    "lines": [
+      {
+        "indent": 0,
+        "text": "I believe in the Son"
+      },
+      {
+        "indent": 0,
+        "text": "I believe in the risen One"
+      },
+      {
+        "indent": 0,
+        "text": "I believe I overcome"
+      },
+      {
+        "indent": 0,
+        "text": "By the power of His blood"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "Amen, amen"
+      },
+      {
+        "indent": 1,
+        "text": "I'm alive, I'm alive"
+      },
+      {
+        "indent": 1,
+        "text": "Because He lives"
+      },
+      {
+        "indent": 1,
+        "text": "Amen, amen"
+      },
+      {
+        "indent": 1,
+        "text": "Let my song join the one that never ends"
+      },
+      {
+        "indent": 1,
+        "text": "Because He lives"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "I believe in the day"
+      },
+      {
+        "indent": 0,
+        "text": "The sky will crack like a page"
+      },
+      {
+        "indent": 0,
+        "text": "He will come back again"
+      },
+      {
+        "indent": 0,
+        "text": "Come to gather His people"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "Because He lives I can face tomorrow"
+      },
+      {
+        "indent": 1,
+        "text": "Because He lives all fear is gone"
+      },
+      {
+        "indent": 1,
+        "text": "Because I know He holds the future"
+      },
+      {
+        "indent": 1,
+        "text": "And life is worth the living just because He lives"
+      }
+    ]
+  },
+  {
     "title": "Behold The Lamb",
     "lines": [
       {
@@ -4566,6 +4655,115 @@ const SONGS = [
     ]
   },
   {
+    "title": "Lead Me to the Cross",
+    "lines": [
+      {
+        "indent": 0,
+        "text": "Saviour I come"
+      },
+      {
+        "indent": 0,
+        "text": "Quiet my soul remember"
+      },
+      {
+        "indent": 0,
+        "text": "Redemption's hill"
+      },
+      {
+        "indent": 0,
+        "text": "Where Your blood was spilled"
+      },
+      {
+        "indent": 0,
+        "text": "For my ransom"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "Everything I once held dear"
+      },
+      {
+        "indent": 1,
+        "text": "I count it all as loss"
+      },
+      {
+        "indent": 1,
+        "text": "Lead me to the cross"
+      },
+      {
+        "indent": 1,
+        "text": "Where Your love poured out"
+      },
+      {
+        "indent": 1,
+        "text": "Bring me to my knees"
+      },
+      {
+        "indent": 1,
+        "text": "Lord I lay me down"
+      },
+      {
+        "indent": 1,
+        "text": "Rid me of myself"
+      },
+      {
+        "indent": 1,
+        "text": "I belong to You"
+      },
+      {
+        "indent": 1,
+        "text": "Lead me, lead me to the cross"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "You were as I"
+      },
+      {
+        "indent": 0,
+        "text": "Tempted and trialed, human"
+      },
+      {
+        "indent": 0,
+        "text": "The word became flesh"
+      },
+      {
+        "indent": 0,
+        "text": "Bore my sin and death"
+      },
+      {
+        "indent": 0,
+        "text": "Now You're risen"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "To Your heart"
+      },
+      {
+        "indent": 1,
+        "text": "To Your heart"
+      },
+      {
+        "indent": 1,
+        "text": "Lead me to Your heart"
+      },
+      {
+        "indent": 1,
+        "text": "Lead me to Your heart"
+      }
+    ]
+  },
+  {
     "title": "Life Deferred",
     "lines": [
       {
@@ -6091,6 +6289,67 @@ const SONGS = [
       {
         "indent": 1,
         "text": "Thank You for the cross, my Friend"
+      }
+    ]
+  },
+  {
+    "title": "Open the Eyes of My Heart",
+    "lines": [
+      {
+        "indent": 0,
+        "text": "Open the eyes of my heart Lord"
+      },
+      {
+        "indent": 0,
+        "text": "Open the eyes of my heart"
+      },
+      {
+        "indent": 0,
+        "text": "I want to see You"
+      },
+      {
+        "indent": 0,
+        "text": "I want to see You"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "To see You high and lifted up"
+      },
+      {
+        "indent": 0,
+        "text": "Shining in the light of Your glory"
+      },
+      {
+        "indent": 0,
+        "text": "Pour out Your power and love"
+      },
+      {
+        "indent": 0,
+        "text": "As we sing holy, holy, holy"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "Holy, holy, holy"
+      },
+      {
+        "indent": 1,
+        "text": "Holy, holy, holy"
+      },
+      {
+        "indent": 1,
+        "text": "Holy, holy, holy"
+      },
+      {
+        "indent": 1,
+        "text": "I want to see You"
       }
     ]
   },
