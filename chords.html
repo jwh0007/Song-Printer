@@ -404,12 +404,30 @@
     @media print {
       body { background: none; }
       .controls { display: none !important; }
-      #songDisplay { margin: 0; padding: 0; }
-      .song-container { box-shadow: none; padding: 0; }
-      .chord-row { color: #000; }
-      .delete-zone { display: none !important; }
       .catalog { display: none !important; }
+      .delete-zone { display: none !important; }
+      #songDisplay { margin: 0; padding: 0; max-width: none; }
+      .song-container { box-shadow: none; border-radius: 0; padding: 0; }
+
+      /* Keep chords blue when printing */
+      .chord-row { color: #1a56db !important; }
+
       @page { size: letter portrait; margin: 0.5in; }
+
+      /* Font-size classes applied by JS before window.print() */
+      .print-12pt .chord-line-pair,
+      .print-12pt .edit-line { font-size: 12pt !important; }
+
+      .print-10pt .chord-line-pair,
+      .print-10pt .edit-line { font-size: 10pt !important; }
+
+      /* Two-column layout: title spans both, sections stay intact */
+      .print-two-col {
+        column-count: 2;
+        column-gap: 20pt;
+      }
+      .print-two-col .song-title-display { column-span: all; }
+      .print-two-col .section-block { break-inside: avoid; }
     }
   </style>
 </head>
@@ -1130,7 +1148,44 @@
 
   document.getElementById('printBtn').addEventListener('click', () => {
     if (editMode) editBtn.click();
-    if (currentSong) window.print();
+    if (!currentSong) return;
+
+    const container = songDisplay.querySelector('.song-container');
+    if (!container) return;
+
+    container.classList.remove('print-12pt', 'print-10pt', 'print-two-col');
+
+    const pairs = Array.from(container.querySelectorAll('.chord-line-pair, .edit-line'));
+    const origSizes = pairs.map(el => el.style.fontSize);
+
+    // Letter page with 0.5in margins = 10in printable height.
+    // CSS 1in = 96px → threshold is 960px.
+    const PAGE_H = 960;
+
+    // Measure at 12pt (≈16px at 96dpi)
+    pairs.forEach(el => { el.style.fontSize = '16px'; });
+    const h12 = container.scrollHeight;
+
+    let printClasses;
+    if (h12 <= PAGE_H) {
+      printClasses = ['print-12pt'];
+    } else {
+      // Measure at 10pt (≈13px)
+      pairs.forEach(el => { el.style.fontSize = '13px'; });
+      const h10 = container.scrollHeight;
+      printClasses = h10 <= PAGE_H ? ['print-10pt'] : ['print-10pt', 'print-two-col'];
+    }
+
+    // Restore inline sizes — @media print CSS overrides with !important
+    pairs.forEach((el, i) => { el.style.fontSize = origSizes[i]; });
+    printClasses.forEach(c => container.classList.add(c));
+
+    // Clean up after print dialog closes
+    window.addEventListener('afterprint', () => {
+      container.classList.remove('print-12pt', 'print-10pt', 'print-two-col');
+    }, { once: true });
+
+    window.print();
   });
 
   // --- Keyboard shortcuts ---
