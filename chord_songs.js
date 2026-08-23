@@ -1711,5 +1711,83 @@ const CHORD_SONGS = [
         ]
       }
     ]
+  },
+  {
+    "title": "Abide",
+    "key": "G",
+    "sections": [
+      {
+        "type": "intro",
+        "label": "Intro",
+        "lines": [
+          "[G] [D] [Em] [C]"
+        ]
+      },
+      {
+        "type": "verse",
+        "label": "Verse 1",
+        "lines": [
+          "For my [G]waking breath, for my [D]daily bread",
+          "[Em]I depend on You, [C]I depend on You",
+          "For the [G]sun to rise, [D]for my sleep at night",
+          "[Em]I depend on You, [C]I depend on You"
+        ]
+      },
+      {
+        "type": "chorus",
+        "label": "Chorus 1",
+        "lines": [
+          "[G]You're the Way, the Truth and the Life",
+          "[D]You're the well that never runs dry",
+          "[Am]I'm the branch and [Em]You are the vine",
+          "[C]Draw me close and [D]teach me to a[G]bide"
+        ]
+      },
+      {
+        "type": "section",
+        "label": "Interlude",
+        "lines": [
+          "[G] [G]"
+        ]
+      },
+      {
+        "type": "verse",
+        "label": "Verse 2",
+        "lines": [
+          "Where Your [G]Spirit leads as I'm [D]following",
+          "[Em]I depend on You, [C]I depend on You",
+          "For the [G]victories still in [D]front of me",
+          "[Em]I depend on You, [C]I depend on You"
+        ]
+      },
+      {
+        "type": "chorus",
+        "label": "Chorus 2",
+        "lines": [
+          "[G]Be my strength, my song in the night",
+          "[D]Be my all, my treasure, my prize",
+          "[Am]I am Yours forever [Em]You're mine",
+          "[C]Draw me close and [D]teach me to a[G]bide"
+        ]
+      },
+      {
+        "type": "verse",
+        "label": "Verse 3",
+        "lines": [
+          "When I pass [G]through death, as I [D]enter rest",
+          "[Em]I depend on You, [C]I depend on You",
+          "For [G]eternal life, to be [D]raised with Christ",
+          "[Em]I depend on You, [C]I depend on You"
+        ]
+      },
+      {
+        "type": "section",
+        "label": "Ending",
+        "lines": [
+          "[G] [D] [Am] [Em]",
+          "[C]Draw me close and [D]teach me to a[G]bide"
+        ]
+      }
+    ]
   }
 ];
