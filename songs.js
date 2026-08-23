@@ -2,6 +2,115 @@
 // Generated: 2026-04-26T13:54:24.136Z
 const SONGS = [
   {
+    "title": "Abide",
+    "lines": [
+      {
+        "indent": 0,
+        "text": "For my waking breath, for my daily bread"
+      },
+      {
+        "indent": 0,
+        "text": "I depend on You, I depend on You"
+      },
+      {
+        "indent": 0,
+        "text": "For the sun to rise, for my sleep at night"
+      },
+      {
+        "indent": 0,
+        "text": "I depend on You, I depend on You"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "You're the Way, the Truth and the Life"
+      },
+      {
+        "indent": 1,
+        "text": "You're the well that never runs dry"
+      },
+      {
+        "indent": 1,
+        "text": "I'm the branch and You are the vine"
+      },
+      {
+        "indent": 1,
+        "text": "Draw me close and teach me to abide"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "Where Your Spirit leads as I'm following"
+      },
+      {
+        "indent": 0,
+        "text": "I depend on You, I depend on You"
+      },
+      {
+        "indent": 0,
+        "text": "For the victories still in front of me"
+      },
+      {
+        "indent": 0,
+        "text": "I depend on You, I depend on You"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "Be my strength, my song in the night"
+      },
+      {
+        "indent": 1,
+        "text": "Be my all, my treasure, my prize"
+      },
+      {
+        "indent": 1,
+        "text": "I am Yours forever You're mine"
+      },
+      {
+        "indent": 1,
+        "text": "Draw me close and teach me to abide"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "When I pass through death, as I enter rest"
+      },
+      {
+        "indent": 0,
+        "text": "I depend on You, I depend on You"
+      },
+      {
+        "indent": 0,
+        "text": "For eternal life, to be raised with Christ"
+      },
+      {
+        "indent": 0,
+        "text": "I depend on You, I depend on You"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "Draw me close and teach me to abide"
+      }
+    ]
+  },
+  {
     "title": "Amazing Grace (My Chains Are Gone)",
     "lines": [
       {
@@ -294,6 +403,75 @@ const SONGS = [
       {
         "indent": 0,
         "text": "Bowing before You, blessing Your name"
+      }
+    ]
+  },
+  {
+    "title": "Because He Lives",
+    "lines": [
+      {
+        "indent": 0,
+        "text": "God sent His Son"
+      },
+      {
+        "indent": 0,
+        "text": "They called Him Jesus"
+      },
+      {
+        "indent": 0,
+        "text": "He came to love, heal and forgive"
+      },
+      {
+        "indent": 0,
+        "text": "He lived and died to buy my pardon"
+      },
+      {
+        "indent": 0,
+        "text": "An empty grave is there to prove my Saviour lives"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "Because He lives I can face tomorrow"
+      },
+      {
+        "indent": 1,
+        "text": "Because He lives all fear is gone"
+      },
+      {
+        "indent": 1,
+        "text": "Because I know He holds the future"
+      },
+      {
+        "indent": 1,
+        "text": "And life is worth the living just because He lives"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "And then one day"
+      },
+      {
+        "indent": 0,
+        "text": "I'll cross that river"
+      },
+      {
+        "indent": 0,
+        "text": "I'll fight life's final war with pain"
+      },
+      {
+        "indent": 0,
+        "text": "And then as death gives way to vict'ry"
+      },
+      {
+        "indent": 0,
+        "text": "I'll see the lights of glory and I'll know he lives"
       }
     ]
   },
@@ -4566,6 +4744,115 @@ const SONGS = [
     ]
   },
   {
+    "title": "Lead Me to the Cross",
+    "lines": [
+      {
+        "indent": 0,
+        "text": "Saviour I come"
+      },
+      {
+        "indent": 0,
+        "text": "Quiet my soul remember"
+      },
+      {
+        "indent": 0,
+        "text": "Redemption's hill"
+      },
+      {
+        "indent": 0,
+        "text": "Where Your blood was spilled"
+      },
+      {
+        "indent": 0,
+        "text": "For my ransom"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "Everything I once held dear"
+      },
+      {
+        "indent": 1,
+        "text": "I count it all as loss"
+      },
+      {
+        "indent": 1,
+        "text": "Lead me to the cross"
+      },
+      {
+        "indent": 1,
+        "text": "Where Your love poured out"
+      },
+      {
+        "indent": 1,
+        "text": "Bring me to my knees"
+      },
+      {
+        "indent": 1,
+        "text": "Lord I lay me down"
+      },
+      {
+        "indent": 1,
+        "text": "Rid me of myself"
+      },
+      {
+        "indent": 1,
+        "text": "I belong to You"
+      },
+      {
+        "indent": 1,
+        "text": "Lead me, lead me to the cross"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "You were as I"
+      },
+      {
+        "indent": 0,
+        "text": "Tempted and trialed, human"
+      },
+      {
+        "indent": 0,
+        "text": "The word became flesh"
+      },
+      {
+        "indent": 0,
+        "text": "Bore my sin and death"
+      },
+      {
+        "indent": 0,
+        "text": "Now You're risen"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "To Your heart"
+      },
+      {
+        "indent": 1,
+        "text": "To Your heart"
+      },
+      {
+        "indent": 1,
+        "text": "Lead me to Your heart"
+      },
+      {
+        "indent": 1,
+        "text": "Lead me to Your heart"
+      }
+    ]
+  },
+  {
     "title": "Life Deferred",
     "lines": [
       {
@@ -6091,6 +6378,67 @@ const SONGS = [
       {
         "indent": 1,
         "text": "Thank You for the cross, my Friend"
+      }
+    ]
+  },
+  {
+    "title": "Open the Eyes of My Heart",
+    "lines": [
+      {
+        "indent": 0,
+        "text": "Open the eyes of my heart Lord"
+      },
+      {
+        "indent": 0,
+        "text": "Open the eyes of my heart"
+      },
+      {
+        "indent": 0,
+        "text": "I want to see You"
+      },
+      {
+        "indent": 0,
+        "text": "I want to see You"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "To see You high and lifted up"
+      },
+      {
+        "indent": 0,
+        "text": "Shining in the light of Your glory"
+      },
+      {
+        "indent": 0,
+        "text": "Pour out Your power and love"
+      },
+      {
+        "indent": 0,
+        "text": "As we sing holy, holy, holy"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "Holy, holy, holy"
+      },
+      {
+        "indent": 1,
+        "text": "Holy, holy, holy"
+      },
+      {
+        "indent": 1,
+        "text": "Holy, holy, holy"
+      },
+      {
+        "indent": 1,
+        "text": "I want to see You"
       }
     ]
   },
