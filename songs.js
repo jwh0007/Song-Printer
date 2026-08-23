@@ -111,6 +111,95 @@ const SONGS = [
     ]
   },
   {
+    "title": "Abide With Me",
+    "lines": [
+      {
+        "indent": 0,
+        "text": "I have a home, eternal home"
+      },
+      {
+        "indent": 0,
+        "text": "But for now, I walk this broken world"
+      },
+      {
+        "indent": 0,
+        "text": "You walked it first, You know our pain"
+      },
+      {
+        "indent": 0,
+        "text": "But You show hope can rise again"
+      },
+      {
+        "indent": 0,
+        "text": "Up from the grave"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "Abide with me, abide with me"
+      },
+      {
+        "indent": 1,
+        "text": "Don't let me fall and don't let go"
+      },
+      {
+        "indent": 1,
+        "text": "Walk with me and never leave"
+      },
+      {
+        "indent": 1,
+        "text": "Ever close, God, abide with me"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "There in the night, Gethsemane"
+      },
+      {
+        "indent": 0,
+        "text": "Before the cross, before the nails"
+      },
+      {
+        "indent": 0,
+        "text": "Overwhelmed, alone You prayed"
+      },
+      {
+        "indent": 0,
+        "text": "You met us in our suffering"
+      },
+      {
+        "indent": 0,
+        "text": "And bore our shame"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "Abide with me, abide with me"
+      },
+      {
+        "indent": 1,
+        "text": "Don't let me fall and don't let go"
+      },
+      {
+        "indent": 1,
+        "text": "Walk with me and never leave"
+      },
+      {
+        "indent": 1,
+        "text": "Ever close, God, abide with me"
+      }
+    ]
+  },
+  {
     "title": "Amazing Grace (My Chains Are Gone)",
     "lines": [
       {
