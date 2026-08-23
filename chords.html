@@ -402,7 +402,17 @@
 
     /* Print styles */
     @media print {
-      body { background: none; }
+      /* Setting explicit @page margins suppresses Chrome's auto-generated
+         headers (URL, date) and footers (page number) */
+      @page {
+        size: letter portrait;
+        margin-top: 0.4in;
+        margin-bottom: 0.4in;
+        margin-left: 0.4in;
+        margin-right: 0.4in;
+      }
+
+      body { background: none; margin: 0; }
       .controls { display: none !important; }
       .catalog { display: none !important; }
       .delete-zone { display: none !important; }
@@ -411,8 +421,6 @@
 
       /* Keep chords blue when printing */
       .chord-row { color: #1a56db !important; }
-
-      @page { size: letter portrait; margin: 0.5in; }
 
       /* Font-size classes applied by JS before window.print() */
       .print-12pt .chord-line-pair,
