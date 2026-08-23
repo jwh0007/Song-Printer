@@ -1789,5 +1789,85 @@ const CHORD_SONGS = [
         ]
       }
     ]
+  },
+  {
+    "title": "Abide With Me",
+    "key": "B",
+    "sections": [
+      {
+        "type": "intro",
+        "label": "Intro",
+        "lines": [
+          "[D#m] [E] [B] [F#]"
+        ]
+      },
+      {
+        "type": "verse",
+        "label": "Verse 1",
+        "lines": [
+          "[D#m]I have a [E]home, eternal [B]home",
+          "But for [B]now I walk this [F#]broken world",
+          "You [D#m]walked it first, You [E]know our pain",
+          "But You show [B]hope can rise a[F#]gain up from the [B]grave"
+        ]
+      },
+      {
+        "type": "chorus",
+        "label": "Chorus",
+        "lines": [
+          "[G#m]Abide with [F#]me, a[E]bide with [B]me",
+          "Don't let me [G#m]fall, and [F#]don't let [E]go [B]",
+          "[G#m]Walk with me and [F#]never [E]leave [G#m] [B/D#]",
+          "Ever [E]close, God a[F#]bide with [B]me"
+        ]
+      },
+      {
+        "type": "verse",
+        "label": "Verse 2",
+        "lines": [
+          "[D#m]There in the [E]night, Geth[B]semane",
+          "Be[B]fore the cross, be[F#]fore the nails",
+          "[D#m]Overwhelmed, a[E]lone You prayed",
+          "You met us [B]in our suf[F#]fering and bore our [B]shame"
+        ]
+      },
+      {
+        "type": "bridge",
+        "label": "Bridge",
+        "lines": [
+          "Oh [B/D#]love that will [E]not ever [B]let me [F#]go",
+          "[G#m]Love that will [E]not ever [B]let me [F#]go [B/D#]",
+          "You [E]never let me [B]go [F#]",
+          "[G#m]Love that will [E]not ever [B]let me [F#]go"
+        ]
+      },
+      {
+        "type": "verse",
+        "label": "Verse 3",
+        "lines": [
+          "And [D#m]up ahead, e[E]ternity",
+          "We'll [B/F#]weep no more [F#]",
+          "And [B]sing for joy, a[B/F#]bide with [F#]me",
+          "We'll weep no [B]more, and sing for joy",
+          "A[B]bide with me"
+        ]
+      },
+      {
+        "type": "tag",
+        "label": "Tag",
+        "lines": [
+          "Ever [E]close, God a[F#]bide with [G#m]me [B/D#]",
+          "Ever [E]close, God a[F#]bide with [B]me"
+        ]
+      },
+      {
+        "type": "section",
+        "label": "Ending",
+        "lines": [
+          "You [E]never let me [B]go [F#]",
+          "[G#m]Love that will [B/D#]not ever [E]let me [B]go [F#]"
+        ]
+      }
+    ]
   }
 ];
