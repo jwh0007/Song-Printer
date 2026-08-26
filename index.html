@@ -400,6 +400,9 @@
       margin-bottom: 8px;
     }
 
+    /* Last-resort fit: let a song's verses/choruses flow across columns */
+    .print-page.allow-span .song-block { break-inside: auto; }
+
     .song-title {
       font-weight: bold;
       margin-bottom: 2px;
@@ -920,6 +923,7 @@
 
   function generateStandardLayout() {
     let bestSize, fitsOnOnePage;
+    let allowSpan = false;
 
     if (manualFontSize !== null) {
       bestSize = manualFontSize;
@@ -928,10 +932,12 @@
       previewContainer.appendChild(page);
       fitsOnOnePage = contentFits(page);
     } else {
+      // Never smaller than 9pt.
       const sizes = [11, 10.5, 10, 9.5, 9];
       bestSize = 9;
       fitsOnOnePage = false;
 
+      // Pass 1: keep each song whole within a column.
       for (const size of sizes) {
         const page = createPage(selectedSongs, size, true, false);
         previewContainer.innerHTML = '';
@@ -943,13 +949,32 @@
           break;
         }
       }
+
+      // Pass 2: still doesn't fit — allow verses/choruses to span columns
+      // rather than pushing onto a second page.
+      if (!fitsOnOnePage) {
+        for (const size of sizes) {
+          const page = createPage(selectedSongs, size, true, false);
+          page.classList.add('allow-span');
+          previewContainer.innerHTML = '';
+          previewContainer.appendChild(page);
+
+          if (contentFits(page)) {
+            bestSize = size;
+            fitsOnOnePage = true;
+            allowSpan = true;
+            break;
+          }
+        }
+      }
     }
 
     lastFontSize = bestSize;
     updateFontSizeDisplay();
 
     if (fitsOnOnePage) {
-      fontInfo.textContent = `Font size: ${bestSize}pt — fits on 1 page`;
+      fontInfo.textContent = `Font size: ${bestSize}pt — fits on 1 page`
+        + (allowSpan ? ' (songs span columns)' : '');
     } else {
       splitIntoPages(selectedSongs, bestSize);
     }

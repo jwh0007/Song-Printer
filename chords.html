@@ -424,20 +424,22 @@
       /* Keep chords blue when printing */
       .chord-row { color: #1a56db !important; }
 
-      /* Font-size classes applied by JS before window.print() */
-      .print-12pt .chord-line-pair,
-      .print-12pt .edit-line { font-size: 12pt !important; }
+      /* Font size is set by JS as an inline var on .song-container */
+      .song-container .chord-line-pair,
+      .song-container .edit-line {
+        font-size: var(--print-font, 12pt) !important;
+      }
 
-      .print-10pt .chord-line-pair,
-      .print-10pt .edit-line { font-size: 10pt !important; }
-
-      /* Two-column layout: title spans both, sections stay intact */
+      /* Two-column layout: title spans both */
       .print-two-col {
         column-count: 2;
         column-gap: 20pt;
       }
       .print-two-col .song-title-display { column-span: all; }
+
+      /* Sections stay intact unless we need to split them to fit */
       .print-two-col .section-block { break-inside: avoid; }
+      .print-split .section-block { break-inside: auto; }
     }
   </style>
 </head>
@@ -1163,36 +1165,59 @@
     const container = songDisplay.querySelector('.song-container');
     if (!container) return;
 
-    container.classList.remove('print-12pt', 'print-10pt', 'print-two-col');
+    container.classList.remove('print-two-col', 'print-split');
+    container.style.removeProperty('--print-font');
 
     const pairs = Array.from(container.querySelectorAll('.chord-line-pair, .edit-line'));
     const origSizes = pairs.map(el => el.style.fontSize);
 
-    // Letter page with 0.5in margins = 10in printable height.
-    // CSS 1in = 96px → threshold is 960px.
+    // Letter portrait, 0.4in padding top+bottom = 10.2in printable.
+    // CSS 1in = 96px. Trim a little for safety.
     const PAGE_H = 960;
 
-    // Measure at 12pt (≈16px at 96dpi)
-    pairs.forEach(el => { el.style.fontSize = '16px'; });
-    const h12 = container.scrollHeight;
+    // Largest to smallest — never go below 9pt.
+    const SIZES = [12, 11.5, 11, 10.5, 10, 9.5, 9];
 
-    let printClasses;
-    if (h12 <= PAGE_H) {
-      printClasses = ['print-12pt'];
-    } else {
-      // Measure at 10pt (≈13px)
-      pairs.forEach(el => { el.style.fontSize = '13px'; });
-      const h10 = container.scrollHeight;
-      printClasses = h10 <= PAGE_H ? ['print-10pt'] : ['print-10pt', 'print-two-col'];
+    // Measure content height at a given pt size under a given set of classes.
+    function heightAt(pt, classes) {
+      container.classList.remove('print-two-col', 'print-split');
+      classes.forEach(c => container.classList.add(c));
+      const px = pt * (96 / 72);
+      pairs.forEach(el => { el.style.fontSize = px + 'px'; });
+      return container.scrollHeight;
     }
 
-    // Restore inline sizes — @media print CSS overrides with !important
+    // Try each layout in order of preference, stepping the font down within each.
+    const LAYOUTS = [
+      [],                            // 1 column, sections intact
+      ['print-two-col'],             // 2 columns, sections intact
+      ['print-two-col', 'print-split'] // 2 columns, sections may span columns
+    ];
+
+    let chosenSize = 9;
+    let chosenClasses = ['print-two-col', 'print-split'];
+
+    outer:
+    for (const classes of LAYOUTS) {
+      for (const pt of SIZES) {
+        if (heightAt(pt, classes) <= PAGE_H) {
+          chosenSize = pt;
+          chosenClasses = classes;
+          break outer;
+        }
+      }
+    }
+
+    // Restore inline sizes — print CSS drives the size via --print-font
     pairs.forEach((el, i) => { el.style.fontSize = origSizes[i]; });
-    printClasses.forEach(c => container.classList.add(c));
+    container.classList.remove('print-two-col', 'print-split');
+    chosenClasses.forEach(c => container.classList.add(c));
+    container.style.setProperty('--print-font', chosenSize + 'pt');
 
     // Clean up after print dialog closes
     window.addEventListener('afterprint', () => {
-      container.classList.remove('print-12pt', 'print-10pt', 'print-two-col');
+      container.classList.remove('print-two-col', 'print-split');
+      container.style.removeProperty('--print-font');
     }, { once: true });
 
     window.print();
