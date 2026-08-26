@@ -1798,7 +1798,7 @@ const CHORD_SONGS = [
         "type": "intro",
         "label": "Intro",
         "lines": [
-          "[D#m] /// [E] /// [B] /// [F#sus4] ///"
+          "[D#m] [E] [B] [F#]"
         ]
       },
       {
@@ -1808,17 +1808,17 @@ const CHORD_SONGS = [
           "I have a [D#m]home, eternal [E]home",
           "But for [B]now I walk this [F#]broken world",
           "You [D#m]walked it first, You [E]know our pain",
-          "But You [B]show hope [F#]can rise again [Bsus]up from the [B]grave"
+          "But You [B]show hope [F#]can rise again up from the [B]grave"
         ]
       },
       {
         "type": "chorus",
         "label": "Chorus",
         "lines": [
-          "[G#m]Abide with [F#]me,   a[E]bide with [B]me,",
-          "[G#m]don't let me [F#]fall,   [E6]And don't let [B]go",
-          "[G#m]Walk with [F#]me   [E]And never [G#m]leave [B/D#]",
-          "Ever [Emaj7]close, God a[F#sus]bide  [Bsus]with [B]me [Bsus] [B]"
+          "[G#m]Abide with [F#]me,   [E]abide with [B]me",
+          "[G#m]don't let me [F#]fall,   [E]and don't let [B]go",
+          "[G#m]Walk with [F#]me   [E]and never [G#m]leave [B/D#]",
+          "Ever [E]close, God a[F#]bide with [B]me"
         ]
       },
       {
@@ -1826,28 +1826,46 @@ const CHORD_SONGS = [
         "label": "Verse 2",
         "lines": [
           "There in [D#m]the night, Geth[E]semane",
-          "before [B]the cross, Before [F#]the nails",
-          "[D#m]Overwhelmed, [E]Alone You prayed,",
-          "You [B]met us in our [F#]suffering [Bsus]And bore our [B]shame"
+          "be[B]fore the cross, be[F#]fore the nails",
+          "[D#m]Overwhelmed, [E]alone You prayed",
+          "You met [B]us in our [F#]suffering and bore our [B]shame"
         ]
       },
       {
         "type": "bridge",
         "label": "Bridge",
         "lines": [
-          "[B]O love that [E]will [B]not [F#]ever let me go!",
-          "[G#m]Love that [E]will [B]not [F#]ever [B/D#]let me go!",
-          "You [E]never [B]let me [F#]go!",
-          "[G#m]Love that [E]will not [B]ever let me [F#]go!   [E]You'll [B]never let us [F#]go!",
-          "[G#m7] [E] [B] [F#]   (2 bars)"
+          "[B/D#]Oh love that [E]will [B]not [F#]ever let me go",
+          "[G#m]Love that [E]will [B]not [F#]ever [B/D#]let me go",
+          "You [E]never [B]let me [F#]go",
+          "[G#m]Love that [E]will [B]not [F#]ever let me go"
+        ]
+      },
+      {
+        "type": "verse",
+        "label": "Verse 3",
+        "lines": [
+          "And up [D#m]ahead, e[E]ternity",
+          "We'll [B/F#]weep no [F#]more",
+          "And [B]sing for joy, a[B/F#]bide with [F#]me",
+          "We'll weep no [B]more, and sing for joy",
+          "A[B]bide with me"
         ]
       },
       {
         "type": "tag",
         "label": "Tag",
         "lines": [
-          "And up [D#m]ahead e[E]ternity",
-          "We'll [B/F#]weep no [F#]more and [Bsus]sing for [B]joy  Abide with me"
+          "Ever [E]close, God a[F#]bide with [G#m]me [B/D#]",
+          "Ever [E]close, God a[F#]bide with [B]me"
+        ]
+      },
+      {
+        "type": "section",
+        "label": "Ending",
+        "lines": [
+          "You [E]never [B]let me [F#]go",
+          "[G#m]Love that [E]will [B]not [F#]ever let me go [B/D#]"
         ]
       }
     ]
