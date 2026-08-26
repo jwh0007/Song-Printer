@@ -344,6 +344,40 @@ const CHORD_SONGS = [
     ]
   },
   {
+    "title": "Everlasting God",
+    "key": "G",
+    "sections": [
+      {
+        "type": "verse",
+        "label": "Verse",
+        "lines": [
+          "[G]Strength will rise as we [Gsus]wait upon the [G]Lord",
+          "[Gsus]We will [G]wait upon the Lord, we will [Gsus]wait upon the [G]Lord",
+          "[G]Strength will rise as we [Gsus]wait upon the [G]Lord",
+          "We will [Gsus]wait upon the [G]Lord, we will [Gsus]wait upon the [G]Lord"
+        ]
+      },
+      {
+        "type": "section",
+        "label": "Pre-Chorus",
+        "lines": [
+          "[G/B] [C]Our God, [G/B] [C]You reign [D]for[Em]ever [D]",
+          "[G/B] [C]Our hope, [G/B] [C]our strong [D]De[Em]liv'rer [D]"
+        ]
+      },
+      {
+        "type": "chorus",
+        "label": "Chorus",
+        "lines": [
+          "[G]You are the everlasting God, the [C]everlasting God",
+          "[Em]You do not faint, [C]You [D/C]won't [C]grow [Am7/C]weary",
+          "[G]You're the defender of the weak, [C]You comfort those in need",
+          "[Em]You lift us up on [C]wings [D/C]like [C] [Am7/C]eagles"
+        ]
+      }
+    ]
+  },
+  {
     "title": "Firm Foundation",
     "key": "G",
     "sections": [

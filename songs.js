@@ -1622,6 +1622,91 @@ const SONGS = [
     ]
   },
   {
+    "title": "Everlasting God",
+    "lines": [
+      {
+        "indent": 0,
+        "text": "Strength will rise as we wait upon the Lord"
+      },
+      {
+        "indent": 0,
+        "text": "We will wait upon the Lord, we will wait upon the Lord"
+      },
+      {
+        "indent": 0,
+        "text": "Strength will rise as we wait upon the Lord"
+      },
+      {
+        "indent": 0,
+        "text": "We will wait upon the Lord, we will wait upon the Lord"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "Our God, You reign forever"
+      },
+      {
+        "indent": 1,
+        "text": "Our hope, our strong Deliv'rer"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "You are the everlasting God, the everlasting God"
+      },
+      {
+        "indent": 1,
+        "text": "You do not faint, You won't grow weary"
+      },
+      {
+        "indent": 1,
+        "text": "You're the defender of the weak, You comfort those in need"
+      },
+      {
+        "indent": 1,
+        "text": "You lift us up on wings like eagles"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "Our God, You reign forever"
+      },
+      {
+        "indent": 1,
+        "text": "Our hope, our strong Deliv'rer"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "You are the everlasting God, the everlasting God"
+      },
+      {
+        "indent": 1,
+        "text": "You do not faint, You won't grow weary"
+      },
+      {
+        "indent": 1,
+        "text": "You're the defender of the weak, You comfort those in need"
+      },
+      {
+        "indent": 1,
+        "text": "You lift us up on wings like eagles"
+      }
+    ]
+  },
+  {
     "title": "Firm Foundation",
     "lines": [
       {
@@ -2874,29 +2959,98 @@ const SONGS = [
   {
     "title": "Here I Am to Worship",
     "lines": [
-      {"indent": 0, "text": "Light of the world"},
-      {"indent": 0, "text": "You stepped down into darkness"},
-      {"indent": 0, "text": "Opened my eyes, let me see"},
-      {"indent": 0, "text": "Beauty that made this heart adore You"},
-      {"indent": 0, "text": "Hope of a life spent with You"},
-      {"indent": 0, "text": ""},
-      {"indent": 1, "text": "And here I am to worship"},
-      {"indent": 1, "text": "Here I am to bow down"},
-      {"indent": 1, "text": "Here I am to say that You're my God"},
-      {"indent": 1, "text": "You're altogether lovely"},
-      {"indent": 1, "text": "Altogether worthy"},
-      {"indent": 1, "text": "Altogether wonderful to me"},
-      {"indent": 0, "text": ""},
-      {"indent": 0, "text": "King of all days"},
-      {"indent": 0, "text": "Oh so highly exalted"},
-      {"indent": 0, "text": "Glorious in heaven above"},
-      {"indent": 0, "text": "Humbly You came to the earth You created"},
-      {"indent": 0, "text": "All for love's sake became poor"},
-      {"indent": 0, "text": ""},
-      {"indent": 0, "text": "I'll never know how much it cost"},
-      {"indent": 0, "text": "To see my sin upon that cross"},
-      {"indent": 0, "text": "I'll never know how much it cost"},
-      {"indent": 0, "text": "To see my sin upon that cross"}
+      {
+        "indent": 0,
+        "text": "Light of the world"
+      },
+      {
+        "indent": 0,
+        "text": "You stepped down into darkness"
+      },
+      {
+        "indent": 0,
+        "text": "Opened my eyes, let me see"
+      },
+      {
+        "indent": 0,
+        "text": "Beauty that made this heart adore You"
+      },
+      {
+        "indent": 0,
+        "text": "Hope of a life spent with You"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 1,
+        "text": "And here I am to worship"
+      },
+      {
+        "indent": 1,
+        "text": "Here I am to bow down"
+      },
+      {
+        "indent": 1,
+        "text": "Here I am to say that You're my God"
+      },
+      {
+        "indent": 1,
+        "text": "You're altogether lovely"
+      },
+      {
+        "indent": 1,
+        "text": "Altogether worthy"
+      },
+      {
+        "indent": 1,
+        "text": "Altogether wonderful to me"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "King of all days"
+      },
+      {
+        "indent": 0,
+        "text": "Oh so highly exalted"
+      },
+      {
+        "indent": 0,
+        "text": "Glorious in heaven above"
+      },
+      {
+        "indent": 0,
+        "text": "Humbly You came to the earth You created"
+      },
+      {
+        "indent": 0,
+        "text": "All for love's sake became poor"
+      },
+      {
+        "indent": 0,
+        "text": ""
+      },
+      {
+        "indent": 0,
+        "text": "I'll never know how much it cost"
+      },
+      {
+        "indent": 0,
+        "text": "To see my sin upon that cross"
+      },
+      {
+        "indent": 0,
+        "text": "I'll never know how much it cost"
+      },
+      {
+        "indent": 0,
+        "text": "To see my sin upon that cross"
+      }
     ]
   },
   {
