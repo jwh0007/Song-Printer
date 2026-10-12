@@ -238,7 +238,6 @@ Years of hand-categorized history are a labeled dataset. `eval` command replays 
 | 6 | Budget model | Keep monthly + biweekly category budgets |
 | 7 | AI privacy | Cloud models allowed; redact account/card numbers |
 | 8 | Frontend | SvelteKit |
-
 | 9 | Repo name | `jwh0007/fin-app-v3` (private; to be created by John) |
 | 10 | "Reccreation" spelling | Fixed to "Recreation" during migration |
 
