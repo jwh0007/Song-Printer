@@ -1,6 +1,6 @@
-# Budget App — Design Draft v0.1
+# Budget App — Design Draft v0.2
 
-Status: **draft for discussion**. Sections marked **[DECIDE]** need input before build.
+Status: **draft v0.2** — core decisions made (see section 10).
 
 ---
 
@@ -25,10 +25,10 @@ The v2 normalized schema (`transactions`, `classifications`, `categories`, `vend
 
 ## 2. Goals
 
-1. **Importing takes under a minute.** Drop files (CSV, OFX/QFX, PDF, receipt photo/screenshot) or pull from a bank feed; review only what the system is unsure about.
+1. **Importing takes under a minute.** Drop files (CSV, OFX/QFX, PDF, receipt photo/screenshot); review only what the system is unsure about.
 2. **AI-native, not AI-dependent.** Every AI feature has a deterministic path underneath; the app is fully usable with AI turned off.
 3. **Model agnostic.** Swap Claude / GPT / Gemini / a local model per task via config. No provider-specific logic outside one adapter layer.
-4. **Two-person household.** John and Ariel, their own accounts (Venmo, PayPal), shared budget.
+4. **Two-person household.** John and Ariel share one login; accounts still carry an owner (John / Ariel / joint).
 5. **Keep all history.** Migrate every year of existing data with categories intact.
 
 Non-goals (for v1): investment tracking, tax prep, multi-household SaaS.
@@ -60,14 +60,13 @@ Non-goals (for v1): investment tracking, tax prep, multi-household SaaS.
          SQLite (single file, WAL)  +  /files (originals)
 ```
 
-### Proposed stack **[DECIDE]**
-- **Backend:** Python + FastAPI + SQLAlchemy + SQLite. Reuses the existing Python importers and the user's familiarity.
-- **Frontend:** SvelteKit or React (Vite) SPA, mobile-responsive. Installable as a PWA so receipt photos can be taken from a phone.
-- **Hosting options:**
-  - (a) Local on the Mac, reachable on home Wi-Fi — simplest, most private, phone works only at home.
-  - (b) Small VPS / home server behind Tailscale — phone works anywhere, still private.
-  - (c) Managed cloud (Fly.io/Render + Postgres) — most convenient, most exposure.
-  - Recommendation: build for (a), keep (b) a config change away.
+### Stack (decided)
+- **Backend:** Python + FastAPI + SQLAlchemy + SQLite. Reuses the existing Python importers.
+- **Frontend:** SvelteKit (static build served by FastAPI), mobile-responsive, installable as a PWA so receipt photos can be taken from a phone.
+- **Host:** an always-on Mac mini at home. Reached from phones/laptops anywhere over **Tailscale**; nothing exposed to the public internet.
+- **Deploy:** code lives in a GitHub repo; the Mac mini runs `git pull` + a restart script (launchd service). The database and original statement files live only on the Mac mini, never in git.
+- **Auth:** one shared household login (John and Ariel), on top of Tailscale's device-level access. Audit log records `user | rule | ai`, not which person.
+- **Backups:** nightly SQLite `.backup` to a dated file, plus Time Machine.
 
 ---
 
@@ -117,11 +116,21 @@ file/feed → fingerprint (sha256, skip if seen)
           → Inbox: only rows below confidence threshold or flagged
 ```
 
-**Bank connection [DECIDE]:**
-- File import only (current approach, zero cost, zero third-party).
-- **SimpleFIN Bridge** (~$15/yr, read-only, privacy-focused, works with many US banks).
-- Plaid (broadest coverage, more setup, developer account required).
-- Recommendation: file import in v1, SimpleFIN as the first feed adapter.
+**Bank connection (decided): files only.** No aggregator (SimpleFIN/Plaid). The import step itself must therefore be fast:
+- One drop zone (web upload, phone share sheet, and a watched folder on the Mac mini).
+- Profiles for each known source, built in from day one:
+
+| Source | Accounts | Format |
+|---|---|---|
+| Redstone FCU checking | 2 | CSV (Transaction Number, Date, Description, Memo, Debit, Credit, …) |
+| Robinhood credit card | 1 | CSV / statement export (profile to be captured from a sample) |
+| Venmo | 2 (John, Ariel) | Statement CSV, header on row 3 |
+| PayPal | 1 | Activity CSV |
+| Amazon / Target / Walmart / Lowe's / Home Depot / Sam's | — | Order-history CSV, PDF, receipt photo |
+
+- Per-account "last imported through" date shown on the dashboard, so it's obvious what needs downloading.
+
+Note: the existing skill describes the credit card CSV as `Post Date, Description, Category, Reference Number, Amount`. Confirm whether that is the Robinhood card or a previous card.
 
 **Receipts & orders:** keep the existing order-history scraper extension, but have it POST straight to the app instead of downloading a CSV. Photos/PDFs go through the AI `extract_receipt` task.
 
@@ -171,9 +180,10 @@ When a user re-categorizes, the app (1) locks that split, (2) adds it to the few
 ### 6.5 Evaluation harness
 Years of hand-categorized history are a labeled dataset. `eval` command replays a hold-out set through any provider/model and reports accuracy, cost and latency per task. This is what makes "model agnostic" practical: choose models on measured results, re-test when new models ship.
 
-### 6.6 Privacy controls
-- Per-task "local only" flag.
-- Redaction before sending: account numbers, names in Venmo notes (optional).
+### 6.6 Privacy controls (decided)
+- Cloud providers are allowed for all tasks.
+- Account numbers, card numbers and masked digits (`XXXX1234`, `*1234`) are redacted before any AI call.
+- Per-task "local only" flag remains available but off by default.
 - `ai_calls` log records what was sent where.
 
 ---
@@ -182,7 +192,7 @@ Years of hand-categorized history are a labeled dataset. `eval` command replays 
 
 1. **Inbox** — the only screen needed after an import. Cards for low-confidence items with AI suggestion + one-tap accept / change / split. Keyboard-driven on desktop, swipe on phone.
 2. **Transactions** — fast filterable table; inline edit; split editor; linked receipt view.
-3. **Budget** — monthly and biweekly views (current workbook has both), budget vs actual, rollover.
+3. **Budget** — monthly and biweekly (paycheck-period) views, matching the workbook's Budget and Biweekly Budget tabs; budget vs actual. No envelope/rollover model.
 4. **Receipts** — upload/photo, extracted items, match status.
 5. **Ask** — chat over the data with cited queries; saved questions become dashboard tiles.
 6. **Insights** (generated after each import) — month summary, anomalies, new/changed subscriptions, price changes on repeat items.
@@ -192,9 +202,11 @@ Years of hand-categorized history are a labeled dataset. `eval` command replays 
 
 ## 8. Migration
 
-1. Load categories tree from LookupTable E/F map (deduplicate the duplicate leaf names noted in v2).
-2. Import `finance.db` v2 transactions/classifications as locked splits.
-3. Import workbook Expense Trackers for any years missing from the DB; convert header/sub-row groups into splits.
+**The MFS workbook is the source of truth** (it is ahead of `finance.db`). The database is used only to fill gaps and cross-check.
+
+1. Load categories tree from LookupTable E/F map (keeping the "Reccreation" spelling or fixing it — to confirm).
+2. Import every year's Expense Tracker as locked splits; convert Amazon/receipt header + sub-row groups into multi-split transactions.
+3. Compare against `finance.db`; report rows present only in the DB rather than importing them silently.
 4. Import Itemized Purchases → receipts + line items, re-link to splits.
 5. Import LookupTable merchant rows → `merchants` + `rules`.
 6. Reconciliation report: per-year totals by category, old vs new, must match to the cent.
@@ -205,22 +217,30 @@ Years of hand-categorized history are a labeled dataset. `eval` command replays 
 
 | Phase | Scope | Done when |
 |---|---|---|
-| 0 | Repo, schema, migration from current data | Totals reconcile with workbook for every year |
+| 0 | Repo, schema, migration from the MFS workbook | Totals reconcile with workbook for every year |
 | 1 | File import + profiles + dedupe + transfers + rules | A month of statements imports with no manual CSV editing |
 | 2 | AI gateway + `categorize` + Inbox + eval harness | ≥90% auto-categorized on hold-out, measured |
 | 3 | Receipts: extraction, matching, splits | Amazon/Target/Walmart orders auto-split |
 | 4 | Budget views + Ask + Insights | Replaces the Dashboard/Biweekly tabs |
-| 5 | MCP server, phone PWA, bank feed | Optional extras |
+| 5 | MCP server, phone PWA polish | Optional extras |
 
 ---
 
-## 10. Open questions
+## 10. Decisions log
 
-1. **Repo location.** This draft sits on a branch of `Song-Printer`. Recommendation: a new dedicated repo.
-2. **Hosting:** local Mac vs. private server vs. cloud (section 3).
-3. **Bank feed:** files only vs. SimpleFIN vs. Plaid (section 5).
-4. **Users:** Does Ariel use the app directly (separate login, phone access) or is it John-operated?
-5. **Source of truth for migration:** Is `finance.db` v2 current and complete, or is the workbook ahead of it?
-6. **Budget model:** Keep monthly + biweekly category budgets as-is, or consider envelope/zero-based?
-7. **AI privacy line:** Is sending transaction descriptions to cloud providers acceptable, or should categorization default to a local model?
-8. **Frontend preference:** any preference between Svelte and React, or none?
+| # | Question | Decision |
+|---|---|---|
+| 1 | Where code lives / runs | New GitHub repo; runs on a home Mac mini, deployed by `git pull` |
+| 2 | Remote access | Tailscale; no public exposure |
+| 3 | Bank feed | Files only (Redstone ×2, Robinhood card, Venmo ×2, PayPal) |
+| 4 | Users | John and Ariel, one shared login |
+| 5 | Migration source | MFS workbook is primary; `finance.db` for cross-check only |
+| 6 | Budget model | Keep monthly + biweekly category budgets |
+| 7 | AI privacy | Cloud models allowed; redact account/card numbers |
+| 8 | Frontend | SvelteKit |
+
+## 11. Still open
+
+1. Name of the new repo (to be created on GitHub).
+2. Is the `Post Date, Description, Category, Reference Number, Amount` CSV the Robinhood card? A sample export of each source (with numbers redacted) is needed to build the import profiles.
+3. Fix the "Reccreation" spelling during migration, or keep it?
