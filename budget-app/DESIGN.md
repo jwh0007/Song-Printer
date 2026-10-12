@@ -204,7 +204,7 @@ Years of hand-categorized history are a labeled dataset. `eval` command replays 
 
 **The MFS workbook is the source of truth** (it is ahead of `finance.db`). The database is used only to fill gaps and cross-check.
 
-1. Load categories tree from LookupTable E/F map (keeping the "Reccreation" spelling or fixing it — to confirm).
+1. Load categories tree from LookupTable E/F map; rename "Reccreation" → "Recreation".
 2. Import every year's Expense Tracker as locked splits; convert Amazon/receipt header + sub-row groups into multi-split transactions.
 3. Compare against `finance.db`; report rows present only in the DB rather than importing them silently.
 4. Import Itemized Purchases → receipts + line items, re-link to splits.
@@ -239,8 +239,9 @@ Years of hand-categorized history are a labeled dataset. `eval` command replays 
 | 7 | AI privacy | Cloud models allowed; redact account/card numbers |
 | 8 | Frontend | SvelteKit |
 
+| 9 | Repo name | `jwh0007/fin-app-v3` (private; to be created by John) |
+| 10 | "Reccreation" spelling | Fixed to "Recreation" during migration |
+
 ## 11. Still open
 
-1. Name of the new repo (to be created on GitHub).
-2. Is the `Post Date, Description, Category, Reference Number, Amount` CSV the Robinhood card? A sample export of each source (with numbers redacted) is needed to build the import profiles.
-3. Fix the "Reccreation" spelling during migration, or keep it?
+1. Robinhood card CSV format is unknown. Need one redacted sample export from each source (Redstone checking, Robinhood card, Venmo, PayPal) to build import profiles.
